@@ -1,4 +1,5 @@
 import service.*;
+import dto.User;
 import dto.Book;
 import dto.Transaction;
 import java.util.List;
@@ -9,13 +10,13 @@ import java.util.Scanner;
  * Provides console-based interface for library operations
  */
 public class LibraryManagementSystem {
-    
+
     private static LoginService loginService;
     private static UserService userService;
     private static BookService bookService;
     private static TransactionService transactionService;
     private static Scanner scanner;
-    
+
     public static void main(String[] args) {
         // Initialize services
         loginService = new LoginService();
@@ -23,13 +24,13 @@ public class LibraryManagementSystem {
         bookService = new BookService();
         transactionService = new TransactionService();
         scanner = new Scanner(System.in);
-        
+
         // Initialize application
         initializeApplication();
-        
+
         // Main application loop
         runApplication();
-        
+
         // Cleanup
         scanner.close();
         System.out.println("Thank you for using Library Management System!");
@@ -98,7 +99,7 @@ public class LibraryManagementSystem {
      * @return true to continue, false to exit
      */
     private static boolean showLoginMenu() {
-        System.out.println("\\n" + "=".repeat(50));
+        System.out.println("\n" + "=".repeat(50));
         System.out.println("           LOGIN MENU");
         System.out.println("=".repeat(50));
         System.out.println("1. Login");
@@ -132,7 +133,7 @@ public class LibraryManagementSystem {
      * @return true to continue, false to exit
      */
     private static boolean handleLogin() {
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("LOGIN");
         System.out.println("-".repeat(30));
 
@@ -145,7 +146,7 @@ public class LibraryManagementSystem {
         boolean loginSuccess = loginService.login(email, password);
 
         if (!loginSuccess) {
-            System.out.println("\\nPress Enter to continue...");
+            System.out.println("\nPress Enter to continue...");
             scanner.nextLine();
         }
 
@@ -157,7 +158,7 @@ public class LibraryManagementSystem {
      * @return true to continue, false to exit
      */
     private static boolean showAdminMenu() {
-        System.out.println("\\n" + "=".repeat(60));
+        System.out.println("\n" + "=".repeat(60));
         System.out.println("         ADMIN PANEL - " + loginService.getCurrentUserName());
         System.out.println("=".repeat(60));
         System.out.println("User Management:");
@@ -176,11 +177,12 @@ public class LibraryManagementSystem {
         System.out.println("  9. Approve/Deny Requests");
         System.out.println(" 10. View All Transactions");
         System.out.println(" 11. View Issued Books");
+        System.out.println(" 12. Return Books (With Fine Collection)");
         System.out.println();
         System.out.println("System:");
-        System.out.println(" 12. Change Password");
-        System.out.println(" 13. Logout");
-        System.out.println(" 14. Exit");
+        System.out.println(" 13. Change Password");
+        System.out.println(" 14. Logout");
+        System.out.println(" 15. Exit");
         System.out.println("=".repeat(60));
         System.out.print("Enter your choice: ");
 
@@ -200,9 +202,10 @@ public class LibraryManagementSystem {
                 case 9: handleApproveOrDenyRequest(); break;
                 case 10: transactionService.displayAllTransactions(); break;
                 case 11: transactionService.displayApprovedTransactions(); break;
-                case 12: handleChangePassword(); break;
-                case 13: loginService.logout(); break;
-                case 14: return false;
+                case 12: handleAdminReturnBook(); break;
+                case 13: handleChangePassword(); break;
+                case 14: loginService.logout(); break;
+                case 15: return false;
                 default: System.out.println("Invalid choice. Please try again.");
             }
         } catch (Exception e) {
@@ -211,7 +214,7 @@ public class LibraryManagementSystem {
         }
 
         if (loginService.isLoggedIn()) {
-            System.out.println("\\nPress Enter to continue...");
+            System.out.println("\nPress Enter to continue...");
             scanner.nextLine();
         }
 
@@ -223,7 +226,7 @@ public class LibraryManagementSystem {
      * @return true to continue, false to exit
      */
     private static boolean showUserMenu() {
-        System.out.println("\\n" + "=".repeat(60));
+        System.out.println("\n" + "=".repeat(60));
         System.out.println("         STUDENT MENU - " + loginService.getCurrentUserName());
         System.out.println("=".repeat(60));
         System.out.println("  1. View Available Books");
@@ -258,7 +261,7 @@ public class LibraryManagementSystem {
         }
 
         if (loginService.isLoggedIn()) {
-            System.out.println("\\nPress Enter to continue...");
+            System.out.println("\nPress Enter to continue...");
             scanner.nextLine();
         }
 
@@ -271,7 +274,7 @@ public class LibraryManagementSystem {
     private static void handleAddUser() {
         if (!loginService.hasAdminPermission()) return;
 
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("ADD NEW USER");
         System.out.println("-".repeat(30));
 
@@ -298,7 +301,7 @@ public class LibraryManagementSystem {
 
         userService.displayAllUsers();
 
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("REMOVE USER");
         System.out.println("-".repeat(30));
 
@@ -332,7 +335,7 @@ public class LibraryManagementSystem {
     private static void handleAddBook() {
         if (!loginService.hasAdminPermission()) return;
 
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("ADD NEW BOOK");
         System.out.println("-".repeat(30));
 
@@ -371,7 +374,7 @@ public class LibraryManagementSystem {
 
         bookService.displayAllBooks();
 
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("REMOVE BOOK");
         System.out.println("-".repeat(30));
 
@@ -402,7 +405,7 @@ public class LibraryManagementSystem {
 
         bookService.displayAllBooks();
 
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("UPDATE BOOK QUANTITY");
         System.out.println("-".repeat(30));
 
@@ -436,7 +439,7 @@ public class LibraryManagementSystem {
 
         transactionService.displayPendingTransactions();
 
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("APPROVE/DENY REQUEST");
         System.out.println("-".repeat(30));
 
@@ -468,10 +471,91 @@ public class LibraryManagementSystem {
     }
 
     /**
+     * Handle admin return book with fine collection
+     */
+    private static void handleAdminReturnBook() {
+        if (!loginService.hasAdminPermission()) return;
+
+        List<Transaction> issuedBooks = transactionService.getApprovedTransactions();
+
+        if (issuedBooks == null || issuedBooks.isEmpty()) {
+            System.out.println("No issued books found.");
+            return;
+        }
+
+        transactionService.displayIssuedBooksWithFines();
+
+        System.out.println("\n" + "-".repeat(50));
+        System.out.println("RETURN BOOK WITH FINE COLLECTION");
+        System.out.println("-".repeat(50));
+
+        try {
+            System.out.print("Enter Transaction ID: ");
+            int transactionId = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            // Get transaction details for fine calculation
+            Transaction transaction = transactionService.getTransactionById(transactionId);
+            if (transaction == null) {
+                System.out.println("Transaction not found.");
+                return;
+            }
+
+            if (!transaction.isActive()) {
+                System.out.println("This book is not currently issued.");
+                return;
+            }
+
+            double fine = transaction.calculateFine();
+
+            if (fine > 0) {
+                System.out.println("\n" + "=".repeat(40));
+                System.out.println("FINE DETAILS");
+                System.out.println("=".repeat(40));
+                System.out.println("Student: " + transaction.getUserName());
+                System.out.println("Book: " + transaction.getBookTitle());
+                System.out.println("Issue Date: " + transaction.getIssueDate());
+                System.out.println("Due Date: " + transaction.getDueDate());
+                System.out.println("Days Overdue: " + transaction.getOverdueDays());
+                System.out.println("Fine Amount: ₹" + String.format("%.2f", fine));
+                System.out.println("=".repeat(40));
+
+                System.out.print("Has the fine been collected? (y/N): ");
+                String fineCollected = scanner.nextLine().trim().toLowerCase();
+
+                boolean collectFine = fineCollected.equals("y") || fineCollected.equals("yes");
+
+                System.out.print("Proceed with book return? (y/N): ");
+                String confirm = scanner.nextLine().trim().toLowerCase();
+
+                if (confirm.equals("y") || confirm.equals("yes")) {
+                    transactionService.adminReturnBook(transactionId, collectFine);
+                } else {
+                    System.out.println("Operation cancelled.");
+                }
+            } else {
+                System.out.println("No fine applicable for this book.");
+                System.out.print("Proceed with book return? (y/N): ");
+                String confirm = scanner.nextLine().trim().toLowerCase();
+
+                if (confirm.equals("y") || confirm.equals("yes")) {
+                    transactionService.adminReturnBook(transactionId, false);
+                } else {
+                    System.out.println("Operation cancelled.");
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            scanner.nextLine(); // Clear invalid input
+        }
+    }
+
+    /**
      * Handle searching books
      */
     private static void handleSearchBooks() {
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("SEARCH BOOKS");
         System.out.println("-".repeat(30));
         System.out.println("1. Search by Title");
@@ -524,7 +608,7 @@ public class LibraryManagementSystem {
 
         bookService.displayAvailableBooks();
 
-        System.out.println("\\n" + "-".repeat(30));
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("REQUEST BOOK ISSUE");
         System.out.println("-".repeat(30));
 
@@ -547,8 +631,8 @@ public class LibraryManagementSystem {
         if (!loginService.hasUserPermission()) return;
 
         transactionService.displayUserActiveTransactions(
-            loginService.getCurrentUserId(),
-            loginService.getCurrentUserName()
+                loginService.getCurrentUserId(),
+                loginService.getCurrentUserName()
         );
     }
 
@@ -557,40 +641,40 @@ public class LibraryManagementSystem {
      */
     private static void handleViewMyAllRequests() {
         if (!loginService.hasUserPermission()) return;
-        
+
         transactionService.displayUserTransactions(
-            loginService.getCurrentUserId(), 
-            loginService.getCurrentUserName()
+                loginService.getCurrentUserId(),
+                loginService.getCurrentUserName()
         );
     }
-    
+
     /**
      * Handle password change
      */
     private static void handleChangePassword() {
         if (!loginService.hasUserPermission()) return;
-        
-        System.out.println("\\n" + "-".repeat(30));
+
+        System.out.println("\n" + "-".repeat(30));
         System.out.println("CHANGE PASSWORD");
         System.out.println("-".repeat(30));
-        
+
         System.out.print("Current Password: ");
         String currentPassword = scanner.nextLine().trim();
-        
+
         System.out.print("New Password: ");
         String newPassword = scanner.nextLine().trim();
-        
+
         System.out.print("Confirm New Password: ");
         String confirmPassword = scanner.nextLine().trim();
-        
+
         if (!newPassword.equals(confirmPassword)) {
             System.out.println("New passwords do not match.");
             return;
         }
-        
+
         loginService.changePassword(currentPassword, newPassword);
     }
-    
+
     /**
      * Display welcome message and instructions
      */
