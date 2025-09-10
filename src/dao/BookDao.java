@@ -51,11 +51,7 @@ public class BookDao extends DatabaseService {
         }
     }
     
-    /**
-     * Get book by ID
-     * @param bookId Book ID
-     * @return Book object if found, null otherwise
-     */
+
     public Book getBookById(int bookId) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -83,10 +79,7 @@ public class BookDao extends DatabaseService {
         return null;
     }
     
-    /**
-     * Get all books
-     * @return List of all books
-     */
+
     public List<Book> getAllBooks() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -270,25 +263,20 @@ public class BookDao extends DatabaseService {
             statement.setInt(7, book.getId());
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
+//            commitTransaction(connection);
             
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error updating book: " + e.getMessage());
-            rollbackTransaction(connection);
+//            rollbackTransaction(connection);
             return false;
         } finally {
             closeResources(connection, statement);
         }
     }
     
-    /**
-     * Update book quantity
-     * @param bookId Book ID
-     * @param newQuantity New quantity
-     * @return true if successful, false otherwise
-     */
+
     public boolean updateBookQuantity(int bookId, int newQuantity) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -316,11 +304,7 @@ public class BookDao extends DatabaseService {
         }
     }
     
-    /**
-     * Delete book by ID
-     * @param bookId Book ID to delete
-     * @return true if successful, false otherwise
-     */
+
     public boolean deleteBook(int bookId) {
         Connection connection = null;
         PreparedStatement statement = null;

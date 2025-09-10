@@ -4,10 +4,7 @@ import dao.BookDao;
 import dto.Book;
 import java.util.List;
 
-/**
- * Book Service
- * Handles book management business logic
- */
+
 public class BookService {
     private BookDao bookDao;
     
@@ -15,33 +12,21 @@ public class BookService {
         this.bookDao = new BookDao();
     }
     
-    /**
-     * Create a new book with validation
-     * @param title Book title
-     * @param author Book author
-     * @param category Book category
-     * @param quantity Book quantity
-     * @param floor Floor number
-     * @param shelve Shelve identifier
-     * @return true if book created successfully, false otherwise
-     */
+
     public boolean createBook(String title, String author, String category, int quantity, int floor, String shelve) {
         try {
-            // Validate input
-            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
-                return false;
-            }
+
+//            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
+//                return false;
+//            }
             
-            // Check if book already exists
             if (bookDao.bookExists(title, author)) {
                 System.out.println("Book already exists. Consider updating quantity instead.");
                 return false;
             }
             
-            // Create book object
             Book book = new Book(title.trim(), author.trim(), category.trim(), quantity, floor, shelve.trim().toUpperCase());
             
-            // Save to database
             boolean success = bookDao.createBook(book);
             
             if (success) {
@@ -58,10 +43,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Get all books
-     * @return List of all books
-     */
+
     public List<Book> getAllBooks() {
         try {
             return bookDao.getAllBooks();
@@ -71,10 +53,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Get available books (quantity > 0)
-     * @return List of available books
-     */
+
     public List<Book> getAvailableBooks() {
         try {
             return bookDao.getAvailableBooks();
@@ -84,11 +63,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Get book by ID
-     * @param bookId Book ID
-     * @return Book object if found, null otherwise
-     */
+
     public Book getBookById(int bookId) {
         try {
             if (bookId <= 0) {
@@ -103,11 +78,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Search books by multiple criteria
-     * @param searchTerm Search term
-     * @return List of matching books
-     */
+
     public List<Book> searchBooks(String searchTerm) {
         try {
             if (searchTerm == null || searchTerm.trim().isEmpty()) {
@@ -122,11 +93,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Search books by title
-     * @param title Title to search
-     * @return List of matching books
-     */
+
     public List<Book> searchBooksByTitle(String title) {
         try {
             if (title == null || title.trim().isEmpty()) {
@@ -141,11 +108,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Search books by author
-     * @param author Author to search
-     * @return List of matching books
-     */
+
     public List<Book> searchBooksByAuthor(String author) {
         try {
             if (author == null || author.trim().isEmpty()) {
@@ -160,11 +123,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Search books by category
-     * @param category Category to search
-     * @return List of matching books
-     */
+
     public List<Book> searchBooksByCategory(String category) {
         try {
             if (category == null || category.trim().isEmpty()) {
@@ -179,62 +138,47 @@ public class BookService {
         }
     }
     
-    /**
-     * Update book information
-     * @param bookId Book ID
-     * @param title New title
-     * @param author New author
-     * @param category New category
-     * @param quantity New quantity
-     * @param floor New floor
-     * @param shelve New shelve
-     * @return true if updated successfully, false otherwise
-     */
-    public boolean updateBook(int bookId, String title, String author, String category, int quantity, int floor, String shelve) {
-        try {
-            // Get existing book
-            Book existingBook = bookDao.getBookById(bookId);
-            if (existingBook == null) {
-                System.out.println("Book not found.");
-                return false;
-            }
-            
-            // Validate input
-            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
-                return false;
-            }
-            
-            // Update book object
-            existingBook.setTitle(title.trim());
-            existingBook.setAuthor(author.trim());
-            existingBook.setCategory(category.trim());
-            existingBook.setQuantity(quantity);
-            existingBook.setFloor(floor);
-            existingBook.setShelve(shelve.trim().toUpperCase());
-            
-            // Save to database
-            boolean success = bookDao.updateBook(existingBook);
-            
-            if (success) {
-                System.out.println("Book updated successfully: " + title);
-                return true;
-            } else {
-                System.out.println("Failed to update book. Please try again.");
-                return false;
-            }
-            
-        } catch (Exception e) {
-            System.err.println("Error updating book: " + e.getMessage());
-            return false;
-        }
-    }
+
+//    public boolean updateBook(int bookId, String title, String author, String category, int quantity, int floor, String shelve) {
+//        try {
+//            // Get existing book
+//            Book existingBook = bookDao.getBookById(bookId);
+//            if (existingBook == null) {
+//                System.out.println("Book not found.");
+//                return false;
+//            }
+//
+//            // Validate input
+////            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
+////                return false;
+////            }
+//
+//            // Update book object
+//            existingBook.setTitle(title.trim());
+//            existingBook.setAuthor(author.trim());
+//            existingBook.setCategory(category.trim());
+//            existingBook.setQuantity(quantity);
+//            existingBook.setFloor(floor);
+//            existingBook.setShelve(shelve.trim().toUpperCase());
+//
+//            // Save to database
+//            boolean success = bookDao.updateBook(existingBook);
+//
+//            if (success) {
+//                System.out.println("Book updated successfully: " + title);
+//                return true;
+//            } else {
+//                System.out.println("Failed to update book. Please try again.");
+//                return false;
+//            }
+//
+//        } catch (Exception e) {
+//            System.err.println("Error updating book: " + e.getMessage());
+//            return false;
+//        }
+//    }
     
-    /**
-     * Update book quantity
-     * @param bookId Book ID
-     * @param newQuantity New quantity
-     * @return true if updated successfully, false otherwise
-     */
+
     public boolean updateBookQuantity(int bookId, int newQuantity) {
         try {
             if (bookId <= 0) {
@@ -271,11 +215,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Delete book by ID
-     * @param bookId Book ID
-     * @return true if deleted successfully, false otherwise
-     */
+
     public boolean deleteBook(int bookId) {
         try {
             if (bookId <= 0) {
@@ -307,9 +247,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Display all books in a formatted table
-     */
+
     public void displayAllBooks() {
         try {
             List<Book> books = getAllBooks();
@@ -319,9 +257,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Display available books in a formatted table
-     */
+
     public void displayAvailableBooks() {
         try {
             List<Book> books = getAvailableBooks();
@@ -331,21 +267,13 @@ public class BookService {
         }
     }
     
-    /**
-     * Display search results in a formatted table
-     * @param books List of books to display
-     * @param searchTerm Search term used
-     */
+
     public void displaySearchResults(List<Book> books, String searchTerm) {
         String title = "SEARCH RESULTS FOR: \"" + searchTerm + "\"";
         displayBooksList(books, title);
     }
     
-    /**
-     * Display books list in a formatted table
-     * @param books List of books to display
-     * @param title Table title
-     */
+
     public void displayBooksList(List<Book> books, String title) {
         try {
             if (books == null || books.isEmpty()) {
@@ -382,11 +310,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Get books by category
-     * @param category Category name
-     * @return List of books in the category
-     */
+
     public List<Book> getBooksByCategory(String category) {
         try {
             if (category == null || category.trim().isEmpty()) {
@@ -400,12 +324,7 @@ public class BookService {
             return null;
         }
     }
-    
-    /**
-     * Check if book is available for issuing
-     * @param bookId Book ID
-     * @return true if available, false otherwise
-     */
+
     public boolean isBookAvailable(int bookId) {
         try {
             Book book = getBookById(bookId);
@@ -416,93 +335,75 @@ public class BookService {
         }
     }
     
-    /**
-     * Validate book input
-     * @param title Book title
-     * @param author Book author
-     * @param category Book category
-     * @param quantity Book quantity
-     * @param floor Floor number
-     * @param shelve Shelve identifier
-     * @return true if valid, false otherwise
-     */
-    private boolean validateBookInput(String title, String author, String category, int quantity, int floor, String shelve) {
-        // Validate title
-        if (title == null || title.trim().isEmpty()) {
-            System.out.println("Title cannot be empty.");
-            return false;
-        }
-        
-        if (title.trim().length() > 200) {
-            System.out.println("Title cannot exceed 200 characters.");
-            return false;
-        }
-        
-        // Validate author
-        if (author == null || author.trim().isEmpty()) {
-            System.out.println("Author cannot be empty.");
-            return false;
-        }
-        
-        if (author.trim().length() > 150) {
-            System.out.println("Author cannot exceed 150 characters.");
-            return false;
-        }
-        
-        // Validate category
-        if (category == null || category.trim().isEmpty()) {
-            System.out.println("Category cannot be empty.");
-            return false;
-        }
-        
-        if (category.trim().length() > 100) {
-            System.out.println("Category cannot exceed 100 characters.");
-            return false;
-        }
-        
-        // Validate quantity
-        if (quantity < 0) {
-            System.out.println("Quantity cannot be negative.");
-            return false;
-        }
-        
-        // Validate floor
-        if (floor <= 0) {
-            System.out.println("Floor must be a positive number.");
-            return false;
-        }
-        
-        // Validate shelve
-        if (shelve == null || shelve.trim().isEmpty()) {
-            System.out.println("Shelve cannot be empty.");
-            return false;
-        }
-        
-        if (shelve.trim().length() > 50) {
-            System.out.println("Shelve identifier cannot exceed 50 characters.");
-            return false;
-        }
-        
-        return true;
-    }
+//
+//    private boolean validateBookInput(String title, String author, String category, int quantity, int floor, String shelve) {
+//
+//        if (title == null || title.trim().isEmpty()) {
+//            System.out.println("Title cannot be empty.");
+//            return false;
+//        }
+//
+//        if (title.trim().length() > 200) {
+//            System.out.println("Title cannot exceed 200 characters.");
+//            return false;
+//        }
+//
+//
+//        if (author == null || author.trim().isEmpty()) {
+//            System.out.println("Author cannot be empty.");
+//            return false;
+//        }
+//
+//        if (author.trim().length() > 150) {
+//            System.out.println("Author cannot exceed 150 characters.");
+//            return false;
+//        }
+//
+//
+//        if (category == null || category.trim().isEmpty()) {
+//            System.out.println("Category cannot be empty.");
+//            return false;
+//        }
+//
+//        if (category.trim().length() > 100) {
+//            System.out.println("Category cannot exceed 100 characters.");
+//            return false;
+//        }
+//
+//
+//        if (quantity < 0) {
+//            System.out.println("Quantity cannot be negative.");
+//            return false;
+//        }
+//
+//
+//        if (floor <= 0) {
+//            System.out.println("Floor must be a positive number.");
+//            return false;
+//        }
+//
+//
+//        if (shelve == null || shelve.trim().isEmpty()) {
+//            System.out.println("Shelve cannot be empty.");
+//            return false;
+//        }
+//
+//        if (shelve.trim().length() > 50) {
+//            System.out.println("Shelve identifier cannot exceed 50 characters.");
+//            return false;
+//        }
+//
+//        return true;
+//    }
     
-    /**
-     * Helper method to truncate string for display
-     * @param str String to truncate
-     * @param maxLength Maximum length
-     * @return Truncated string
-     */
+
     private String truncateString(String str, int maxLength) {
         if (str == null) return "";
         if (str.length() <= maxLength) return str;
         return str.substring(0, maxLength - 3) + "...";
     }
     
-    /**
-     * Check if book exists
-     * @param bookId Book ID
-     * @return true if book exists, false otherwise
-     */
+
     public boolean bookExists(int bookId) {
         try {
             return bookDao.getBookById(bookId) != null;
@@ -512,10 +413,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Get total number of books
-     * @return Total number of books
-     */
+
     public int getTotalBooksCount() {
         try {
             List<Book> books = bookDao.getAllBooks();
@@ -526,10 +424,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Get total number of available books
-     * @return Total number of available books
-     */
+
     public int getAvailableBooksCount() {
         try {
             List<Book> books = bookDao.getAvailableBooks();
@@ -540,10 +435,7 @@ public class BookService {
         }
     }
     
-    /**
-     * Get total quantity of all books
-     * @return Total quantity
-     */
+
     public int getTotalBooksQuantity() {
         try {
             List<Book> books = bookDao.getAllBooks();

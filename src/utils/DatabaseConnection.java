@@ -10,9 +10,9 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
     private static DatabaseConnection instance;
-    private static final String DB_URL = "jdbc:oracle:thin:@localhost:1521:xe";
+    private static final String DB_URL = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
     private static final String DB_USERNAME = "system"; // Change as per your setup
-    private static final String DB_PASSWORD = "password"; // Change as per your setup
+    private static final String DB_PASSWORD = "happy"; // Change as per your setup
     
     private DatabaseConnection() {
         // Private constructor to implement singleton pattern
@@ -47,7 +47,7 @@ public class DatabaseConnection {
     public Connection getConnection() throws SQLException {
         try {
             Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-            connection.setAutoCommit(false); // Enable transaction management
+//            connection.setAutoCommit(false); // Enable transaction management
             return connection;
         } catch (SQLException e) {
             System.err.println("Database connection failed: " + e.getMessage());
@@ -69,16 +69,16 @@ public class DatabaseConnection {
         }
     }
     
-    /**
-     * Test database connection
-     * @return true if connection successful, false otherwise
-     */
-    public boolean testConnection() {
-        try (Connection connection = getConnection()) {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            System.err.println("Connection test failed: " + e.getMessage());
-            return false;
-        }
-    }
+//    /**
+//     * Test database connection
+//     * @return true if connection successful, false otherwise
+//     */
+//    public boolean testConnection() {
+//        try (Connection connection = getConnection()) {
+//            return connection != null && !connection.isClosed();
+//        } catch (SQLException e) {
+//            System.err.println("Connection test failed: " + e.getMessage());
+//            return false;
+//        }
+//    }
 }

@@ -14,13 +14,7 @@ public class UserDao extends DatabaseService {
     public UserDao() {
         super();
     }
-    
-    /**
-     * Authenticate user login
-     * @param email User email
-     * @param password User password
-     * @return User object if authentication successful, null otherwise
-     */
+
     public User authenticateUser(String email, String password) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -76,7 +70,7 @@ public class UserDao extends DatabaseService {
             statement.setString(4, user.getUserType());
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
+//            commitTransaction(connection);
             
             return rowsAffected > 0;
             
@@ -89,11 +83,7 @@ public class UserDao extends DatabaseService {
         }
     }
     
-    /**
-     * Get user by ID
-     * @param userId User ID
-     * @return User object if found, null otherwise
-     */
+
     public User getUserById(int userId) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -236,11 +226,7 @@ public class UserDao extends DatabaseService {
         }
     }
     
-    /**
-     * Delete user by ID
-     * @param userId User ID to delete
-     * @return true if successful, false otherwise
-     */
+
     public boolean deleteUser(int userId) {
         Connection connection = null;
         PreparedStatement statement = null;

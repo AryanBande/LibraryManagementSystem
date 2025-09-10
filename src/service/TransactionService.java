@@ -7,10 +7,7 @@ import dto.Book;
 import java.sql.Date;
 import java.util.List;
 
-/**
- * Transaction Service
- * Handles transaction management business logic
- */
+
 public class TransactionService {
     private TransactionDao transactionDao;
     private BookDao bookDao;
@@ -20,21 +17,16 @@ public class TransactionService {
         this.bookDao = new BookDao();
     }
 
-    /**
-     * Request book issue (create pending transaction)
-     * @param userId User ID
-     * @param bookId Book ID
-     * @return true if request created successfully, false otherwise
-     */
+
     public boolean requestBookIssue(int userId, int bookId) {
         try {
-            // Validate inputs
+
             if (userId <= 0 || bookId <= 0) {
                 System.out.println("Invalid user ID or book ID.");
                 return false;
             }
 
-            // Check if book exists and is available
+
             Book book = bookDao.getBookById(bookId);
             if (book == null) {
                 System.out.println("Book not found.");
@@ -46,13 +38,13 @@ public class TransactionService {
                 return false;
             }
 
-            // Check if user already has an active request for this book
+
             if (transactionDao.hasActiveRequest(userId, bookId)) {
                 System.out.println("You already have an active request or issued copy of this book.");
                 return false;
             }
 
-            // Create transaction
+
             Transaction transaction = new Transaction(userId, bookId, "PENDING");
             boolean success = transactionDao.createTransaction(transaction);
 
@@ -71,14 +63,8 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Approve book request
-     * @param transactionId Transaction ID
-     * @return true if approved successfully, false otherwise
-     */
     public boolean approveBookRequest(int transactionId) {
         try {
-            // Get transaction
             Transaction transaction = transactionDao.getTransactionById(transactionId);
             if (transaction == null) {
                 System.out.println("Transaction not found.");
@@ -90,28 +76,26 @@ public class TransactionService {
                 return false;
             }
 
-            // Check if book is still available
             Book book = bookDao.getBookById(transaction.getBookId());
             if (book == null || book.getQuantity() <= 0) {
                 System.out.println("Book is no longer available.");
                 return false;
             }
 
-            // Update transaction status
             boolean statusUpdated = transactionDao.updateTransactionStatus(transactionId, "APPROVED");
             if (!statusUpdated) {
                 System.out.println("Failed to approve request. Please try again.");
                 return false;
             }
 
-            // Decrease book quantity
-            boolean quantityUpdated = bookDao.updateBookQuantity(book.getId(), book.getQuantity() - 1);
-            if (!quantityUpdated) {
-                // Rollback transaction status
-                transactionDao.updateTransactionStatus(transactionId, "PENDING");
-                System.out.println("Failed to update book quantity. Please try again.");
-                return false;
-            }
+//            boolean quantityUpdated = bookDao.updateBookQuantity(book.getId(), book.getQuantity() - 1);
+            bookDao.updateBookQuantity(book.getId(), book.getQuantity() - 1);
+//            if (!quantityUpdated) {
+//                // Rollback transaction status
+//                transactionDao.updateTransactionStatus(transactionId, "PENDING");
+//                System.out.println("Failed to update book quantity. Please try again.");
+//                return false;
+//            }
 
             System.out.println("Book request approved successfully.");
             return true;
@@ -122,14 +106,9 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Deny book request
-     * @param transactionId Transaction ID
-     * @return true if denied successfully, false otherwise
-     */
+
     public boolean denyBookRequest(int transactionId) {
         try {
-            // Get transaction
             Transaction transaction = transactionDao.getTransactionById(transactionId);
             if (transaction == null) {
                 System.out.println("Transaction not found.");
@@ -141,7 +120,6 @@ public class TransactionService {
                 return false;
             }
 
-            // Update transaction status
             boolean success = transactionDao.updateTransactionStatus(transactionId, "DENIED");
 
             if (success) {
@@ -158,54 +136,45 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Return book (for students - existing functionality)
-     * @param transactionId Transaction ID
-     * @return true if returned successfully, false otherwise
-     */
-    public boolean returnBook(int transactionId) {
-        try {
-            // Get transaction
-            Transaction transaction = transactionDao.getTransactionById(transactionId);
-            if (transaction == null) {
-                System.out.println("Transaction not found.");
-                return false;
-            }
 
-            if (!transaction.isApproved() || transaction.getReturnDate() != null) {
-                System.out.println("Book is not currently issued or already returned.");
-                return false;
-            }
+//    public boolean returnBook(int transactionId) {
+//        try {
+//
+//            Transaction transaction = transactionDao.getTransactionById(transactionId);
+//            if (transaction == null) {
+//                System.out.println("Transaction not found.");
+//                return false;
+//            }
+//
+//            if (!transaction.isApproved() || transaction.getReturnDate() != null) {
+//                System.out.println("Book is not currently issued or already returned.");
+//                return false;
+//            }
+//
+//
+//            Date returnDate = new Date(System.currentTimeMillis());
+//            boolean statusUpdated = transactionDao.returnBook(transactionId, returnDate);
+//            if (!statusUpdated) {
+//                System.out.println("Failed to return book. Please try again.");
+//                return false;
+//            }
+//
+//
+//            Book book = bookDao.getBookById(transaction.getBookId());
+//            if (book != null) {
+//                bookDao.updateBookQuantity(book.getId(), book.getQuantity() + 1);
+//            }
+//
+//            System.out.println("Book returned successfully.");
+//            return true;
+//
+//        } catch (Exception e) {
+//            System.err.println("Error returning book: " + e.getMessage());
+//            return false;
+//        }
+//    }
+//
 
-            // Mark book as returned
-            Date returnDate = new Date(System.currentTimeMillis());
-            boolean statusUpdated = transactionDao.returnBook(transactionId, returnDate);
-            if (!statusUpdated) {
-                System.out.println("Failed to return book. Please try again.");
-                return false;
-            }
-
-            // Increase book quantity
-            Book book = bookDao.getBookById(transaction.getBookId());
-            if (book != null) {
-                bookDao.updateBookQuantity(book.getId(), book.getQuantity() + 1);
-            }
-
-            System.out.println("Book returned successfully.");
-            return true;
-
-        } catch (Exception e) {
-            System.err.println("Error returning book: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Admin return book with fine collection
-     * @param transactionId Transaction ID
-     * @param collectFine Whether fine was collected
-     * @return true if returned successfully, false otherwise
-     */
     public boolean adminReturnBook(int transactionId, boolean collectFine) {
         try {
             // Get transaction
@@ -220,10 +189,10 @@ public class TransactionService {
                 return false;
             }
 
-            // Calculate fine
+
             double fine = transaction.calculateFine();
 
-            // Display fine information
+
             if (fine > 0) {
                 System.out.println("\n" + "=".repeat(50));
                 System.out.println("FINE CALCULATION");
@@ -245,7 +214,6 @@ public class TransactionService {
                 System.out.println("✓ No fine applicable - book returned on time.");
             }
 
-            // Mark book as returned
             Date returnDate = new Date(System.currentTimeMillis());
             boolean statusUpdated = transactionDao.returnBook(transactionId, returnDate);
             if (!statusUpdated) {
@@ -253,7 +221,6 @@ public class TransactionService {
                 return false;
             }
 
-            // Increase book quantity
             Book book = bookDao.getBookById(transaction.getBookId());
             if (book != null) {
                 bookDao.updateBookQuantity(book.getId(), book.getQuantity() + 1);
@@ -272,10 +239,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get all transactions
-     * @return List of all transactions
-     */
+
     public List<Transaction> getAllTransactions() {
         try {
             return transactionDao.getAllTransactions();
@@ -285,10 +249,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get pending transactions
-     * @return List of pending transactions
-     */
+
     public List<Transaction> getPendingTransactions() {
         try {
             return transactionDao.getPendingTransactions();
@@ -298,10 +259,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get approved transactions (currently issued books)
-     * @return List of approved transactions
-     */
+
     public List<Transaction> getApprovedTransactions() {
         try {
             return transactionDao.getApprovedTransactions();
@@ -311,11 +269,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get transactions by user ID
-     * @param userId User ID
-     * @return List of user's transactions
-     */
+
     public List<Transaction> getTransactionsByUserId(int userId) {
         try {
             if (userId <= 0) {
@@ -330,11 +284,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get active transactions for a user (issued books not yet returned)
-     * @param userId User ID
-     * @return List of active transactions
-     */
+
     public List<Transaction> getActiveTransactionsByUserId(int userId) {
         try {
             if (userId <= 0) {
@@ -349,9 +299,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display all transactions in a formatted table
-     */
+
     public void displayAllTransactions() {
         try {
             List<Transaction> transactions = getAllTransactions();
@@ -361,9 +309,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display pending transactions in a formatted table
-     */
+
     public void displayPendingTransactions() {
         try {
             List<Transaction> transactions = getPendingTransactions();
@@ -373,9 +319,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display approved transactions in a formatted table
-     */
+
     public void displayApprovedTransactions() {
         try {
             List<Transaction> transactions = getApprovedTransactions();
@@ -385,9 +329,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display approved transactions with fine information for admin
-     */
+
     public void displayIssuedBooksWithFines() {
         try {
             List<Transaction> transactions = getApprovedTransactions();
@@ -397,11 +339,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display user's transactions in a formatted table
-     * @param userId User ID
-     * @param userName User name for display
-     */
+
     public void displayUserTransactions(int userId, String userName) {
         try {
             List<Transaction> transactions = getTransactionsByUserId(userId);
@@ -412,11 +350,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display user's active transactions in a formatted table
-     * @param userId User ID
-     * @param userName User name for display
-     */
+
     public void displayUserActiveTransactions(int userId, String userName) {
         try {
             List<Transaction> transactions = getActiveTransactionsByUserId(userId);
@@ -427,11 +361,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display transactions list in a formatted table
-     * @param transactions List of transactions to display
-     * @param title Table title
-     */
+
     public void displayTransactionsList(List<Transaction> transactions, String title) {
         try {
             if (transactions == null || transactions.isEmpty()) {
@@ -474,11 +404,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Display transactions list with fine information
-     * @param transactions List of transactions to display
-     * @param title Table title
-     */
+
     public void displayTransactionsListWithFines(List<Transaction> transactions, String title) {
         try {
             if (transactions == null || transactions.isEmpty()) {
@@ -528,11 +454,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get transaction by ID
-     * @param transactionId Transaction ID
-     * @return Transaction object if found, null otherwise
-     */
+
     public Transaction getTransactionById(int transactionId) {
         try {
             if (transactionId <= 0) {
@@ -547,12 +469,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Check if user has already requested a specific book
-     * @param userId User ID
-     * @param bookId Book ID
-     * @return true if user has active request, false otherwise
-     */
+
     public boolean hasActiveRequest(int userId, int bookId) {
         try {
             return transactionDao.hasActiveRequest(userId, bookId);
@@ -562,11 +479,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get transactions by status
-     * @param status Transaction status
-     * @return List of transactions with the specified status
-     */
+
     public List<Transaction> getTransactionsByStatus(String status) {
         try {
             if (status == null || status.trim().isEmpty()) {
@@ -581,10 +494,6 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get total number of transactions
-     * @return Total number of transactions
-     */
     public int getTotalTransactionsCount() {
         try {
             List<Transaction> transactions = transactionDao.getAllTransactions();
@@ -595,10 +504,6 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get number of pending requests
-     * @return Number of pending requests
-     */
     public int getPendingRequestsCount() {
         try {
             List<Transaction> transactions = transactionDao.getPendingTransactions();
@@ -609,10 +514,7 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Get number of currently issued books
-     * @return Number of issued books
-     */
+
     public int getIssuedBooksCount() {
         try {
             List<Transaction> transactions = transactionDao.getApprovedTransactions();
@@ -623,23 +525,14 @@ public class TransactionService {
         }
     }
 
-    /**
-     * Helper method to truncate string for display
-     * @param str String to truncate
-     * @param maxLength Maximum length
-     * @return Truncated string
-     */
+
     private String truncateString(String str, int maxLength) {
         if (str == null) return "";
         if (str.length() <= maxLength) return str;
         return str.substring(0, maxLength - 3) + "...";
     }
 
-    /**
-     * Delete transaction by ID
-     * @param transactionId Transaction ID
-     * @return true if deleted successfully, false otherwise
-     */
+
     public boolean deleteTransaction(int transactionId) {
         try {
             if (transactionId <= 0) {
@@ -662,7 +555,7 @@ public class TransactionService {
                 }
             }
 
-            // Delete transaction
+
             boolean success = transactionDao.deleteTransaction(transactionId);
 
             if (success) {

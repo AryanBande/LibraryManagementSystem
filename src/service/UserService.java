@@ -5,10 +5,7 @@ import dto.User;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * User Service
- * Handles user management business logic
- */
+
 public class UserService {
     private UserDao userDao;
     private static final Pattern EMAIL_PATTERN = 
@@ -18,31 +15,23 @@ public class UserService {
         this.userDao = new UserDao();
     }
     
-    /**
-     * Create a new user with validation
-     * @param name User name
-     * @param email User email
-     * @param password User password
-     * @param userType User type ('USER' or 'ADMIN')
-     * @return true if user created successfully, false otherwise
-     */
+
     public boolean createUser(String name, String email, String password, String userType) {
         try {
-            // Validate input
+
             if (!validateUserInput(name, email, password, userType)) {
                 return false;
             }
-            
-            // Check if email already exists
+
             if (userDao.emailExists(email)) {
                 System.out.println("Email already exists. Please use a different email address.");
                 return false;
             }
             
-            // Create user object
+
             User user = new User(name.trim(), email.trim().toLowerCase(), password, userType.toUpperCase());
             
-            // Save to database
+
             boolean success = userDao.createUser(user);
             
             if (success) {
@@ -59,10 +48,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Get all users
-     * @return List of all users
-     */
+
     public List<User> getAllUsers() {
         try {
             return userDao.getAllUsers();
@@ -72,11 +58,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Get user by ID
-     * @param userId User ID
-     * @return User object if found, null otherwise
-     */
+
     public User getUserById(int userId) {
         try {
             if (userId <= 0) {
@@ -91,11 +73,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Get user by email
-     * @param email User email
-     * @return User object if found, null otherwise
-     */
+
     public User getUserByEmail(String email) {
         try {
             if (email == null || email.trim().isEmpty()) {
@@ -110,65 +88,53 @@ public class UserService {
         }
     }
     
-    /**
-     * Update user information
-     * @param userId User ID
-     * @param name New name
-     * @param email New email
-     * @param password New password
-     * @param userType New user type
-     * @return true if updated successfully, false otherwise
-     */
-    public boolean updateUser(int userId, String name, String email, String password, String userType) {
-        try {
-            // Get existing user
-            User existingUser = userDao.getUserById(userId);
-            if (existingUser == null) {
-                System.out.println("User not found.");
-                return false;
-            }
-            
-            // Validate input
-            if (!validateUserInput(name, email, password, userType)) {
-                return false;
-            }
-            
-            // Check if email is being changed and if new email already exists
-            if (!existingUser.getEmail().equals(email.trim().toLowerCase())) {
-                if (userDao.emailExists(email)) {
-                    System.out.println("Email already exists. Please use a different email address.");
-                    return false;
-                }
-            }
-            
-            // Update user object
-            existingUser.setName(name.trim());
-            existingUser.setEmail(email.trim().toLowerCase());
-            existingUser.setPassword(password);
-            existingUser.setUserType(userType.toUpperCase());
-            
-            // Save to database
-            boolean success = userDao.updateUser(existingUser);
-            
-            if (success) {
-                System.out.println("User updated successfully: " + name);
-                return true;
-            } else {
-                System.out.println("Failed to update user. Please try again.");
-                return false;
-            }
-            
-        } catch (Exception e) {
-            System.err.println("Error updating user: " + e.getMessage());
-            return false;
-        }
-    }
+//
+//    public boolean updateUser(int userId, String name, String email, String password, String userType) {
+//        try {
+//            // Get existing user
+//            User existingUser = userDao.getUserById(userId);
+//            if (existingUser == null) {
+//                System.out.println("User not found.");
+//                return false;
+//            }
+//
+//            // Validate input
+//            if (!validateUserInput(name, email, password, userType)) {
+//                return false;
+//            }
+//
+//            // Check if email is being changed and if new email already exists
+//            if (!existingUser.getEmail().equals(email.trim().toLowerCase())) {
+//                if (userDao.emailExists(email)) {
+//                    System.out.println("Email already exists. Please use a different email address.");
+//                    return false;
+//                }
+//            }
+//
+//            // Update user object
+//            existingUser.setName(name.trim());
+//            existingUser.setEmail(email.trim().toLowerCase());
+//            existingUser.setPassword(password);
+//            existingUser.setUserType(userType.toUpperCase());
+//
+//            // Save to database
+//            boolean success = userDao.updateUser(existingUser);
+//
+//            if (success) {
+//                System.out.println("User updated successfully: " + name);
+//                return true;
+//            } else {
+//                System.out.println("Failed to update user. Please try again.");
+//                return false;
+//            }
+//
+//        } catch (Exception e) {
+//            System.err.println("Error updating user: " + e.getMessage());
+//            return false;
+//        }
+//    }
     
-    /**
-     * Delete user by ID
-     * @param userId User ID
-     * @return true if deleted successfully, false otherwise
-     */
+
     public boolean deleteUser(int userId) {
         try {
             if (userId <= 0) {
@@ -176,7 +142,6 @@ public class UserService {
                 return false;
             }
             
-            // Get user first to show confirmation
             User user = userDao.getUserById(userId);
             if (user == null) {
                 System.out.println("User not found.");
@@ -200,11 +165,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Get users by type
-     * @param userType User type ('USER' or 'ADMIN')
-     * @return List of users with specified type
-     */
+
     public List<User> getUsersByType(String userType) {
         try {
             if (userType == null || userType.trim().isEmpty()) {
@@ -224,10 +185,8 @@ public class UserService {
             return null;
         }
     }
-    
-    /**
-     * Display all users in a formatted table
-     */
+
+
     public void displayAllUsers() {
         try {
             List<User> users = getAllUsers();
@@ -259,10 +218,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Display users by type in a formatted table
-     * @param userType User type ('USER' or 'ADMIN')
-     */
+
     public void displayUsersByType(String userType) {
         try {
             List<User> users = getUsersByType(userType);
@@ -293,96 +249,79 @@ public class UserService {
             System.err.println("Error displaying users by type: " + e.getMessage());
         }
     }
-    
-    /**
-     * Validate user input
-     * @param name User name
-     * @param email User email
-     * @param password User password
-     * @param userType User type
-     * @return true if valid, false otherwise
-     */
+
     private boolean validateUserInput(String name, String email, String password, String userType) {
-        // Validate name
+
         if (name == null || name.trim().isEmpty()) {
             System.out.println("Name cannot be empty.");
             return false;
         }
-        
+
         if (name.trim().length() < 2) {
             System.out.println("Name must be at least 2 characters long.");
             return false;
         }
-        
+
         if (name.trim().length() > 100) {
             System.out.println("Name cannot exceed 100 characters.");
             return false;
         }
-        
+
         // Validate email
         if (email == null || email.trim().isEmpty()) {
             System.out.println("Email cannot be empty.");
             return false;
         }
-        
+
         if (!EMAIL_PATTERN.matcher(email.trim()).matches()) {
             System.out.println("Please enter a valid email address.");
             return false;
         }
-        
+
         if (email.trim().length() > 150) {
             System.out.println("Email cannot exceed 150 characters.");
             return false;
         }
-        
-        // Validate password
+
+
         if (password == null || password.isEmpty()) {
             System.out.println("Password cannot be empty.");
             return false;
         }
-        
+
         if (password.length() < 6) {
             System.out.println("Password must be at least 6 characters long.");
             return false;
         }
-        
+
         if (password.length() > 100) {
             System.out.println("Password cannot exceed 100 characters.");
             return false;
         }
-        
-        // Validate user type
+
+
         if (userType == null || userType.trim().isEmpty()) {
             System.out.println("User type cannot be empty.");
             return false;
         }
-        
+
         String normalizedUserType = userType.trim().toUpperCase();
         if (!normalizedUserType.equals("USER") && !normalizedUserType.equals("ADMIN")) {
             System.out.println("Invalid user type. Must be 'USER' or 'ADMIN'.");
             return false;
         }
-        
+
         return true;
     }
     
-    /**
-     * Helper method to truncate string for display
-     * @param str String to truncate
-     * @param maxLength Maximum length
-     * @return Truncated string
-     */
+
     private String truncateString(String str, int maxLength) {
         if (str == null) return "";
         if (str.length() <= maxLength) return str;
         return str.substring(0, maxLength - 3) + "...";
     }
     
-    /**
-     * Check if user exists
-     * @param userId User ID
-     * @return true if user exists, false otherwise
-     */
+
     public boolean userExists(int userId) {
         try {
             return userDao.getUserById(userId) != null;
@@ -392,10 +331,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Get total number of users
-     * @return Total number of users
-     */
+
     public int getTotalUsersCount() {
         try {
             List<User> users = userDao.getAllUsers();
@@ -406,10 +342,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Get total number of admins
-     * @return Total number of admin users
-     */
+
     public int getAdminsCount() {
         try {
             List<User> admins = userDao.getUsersByType("ADMIN");
@@ -420,10 +353,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Get total number of regular users
-     * @return Total number of regular users
-     */
+
     public int getRegularUsersCount() {
         try {
             List<User> users = userDao.getUsersByType("USER");

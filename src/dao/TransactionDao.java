@@ -195,10 +195,7 @@ public class TransactionDao extends DatabaseService {
         return transactions;
     }
     
-    /**
-     * Get approved transactions (issued books not yet returned)
-     * @return List of approved transactions
-     */
+
     public List<Transaction> getApprovedTransactions() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -231,12 +228,7 @@ public class TransactionDao extends DatabaseService {
         return transactions;
     }
     
-    /**
-     * Update transaction status
-     * @param transactionId Transaction ID
-     * @param newStatus New status ('PENDING', 'APPROVED', 'DENIED')
-     * @return true if successful, false otherwise
-     */
+
     public boolean updateTransactionStatus(int transactionId, String newStatus) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -414,12 +406,7 @@ public class TransactionDao extends DatabaseService {
         }
     }
     
-    /**
-     * Helper method to map ResultSet to Transaction object
-     * @param resultSet ResultSet from query
-     * @return Transaction object
-     * @throws SQLException if error accessing result set
-     */
+
     private Transaction mapResultSetToTransaction(ResultSet resultSet) throws SQLException {
         Transaction transaction = new Transaction();
         transaction.setId(resultSet.getInt("id"));

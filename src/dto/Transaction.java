@@ -29,14 +29,14 @@ public class Transaction {
     public Transaction() {}
 
     // Constructor with all fields
-    public Transaction(int id, int userId, int bookId, String status, Date issueDate, Date returnDate) {
-        this.id = id;
-        this.userId = userId;
-        this.bookId = bookId;
-        this.status = status;
-        this.issueDate = issueDate;
-        this.returnDate = returnDate;
-    }
+//    public Transaction(int id, int userId, int bookId, String status, Date issueDate, Date returnDate) {
+//        this.id = id;
+//        this.userId = userId;
+//        this.bookId = bookId;
+//        this.status = status;
+//        this.issueDate = issueDate;
+//        this.returnDate = returnDate;
+//    }
 
     // Constructor without id (for new transaction creation)
     public Transaction(int userId, int bookId, String status) {
@@ -119,7 +119,7 @@ public class Transaction {
         this.bookAuthor = bookAuthor;
     }
 
-    // Status check methods
+
     public boolean isPending() {
         return "PENDING".equalsIgnoreCase(status);
     }

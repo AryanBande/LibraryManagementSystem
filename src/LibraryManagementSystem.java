@@ -4,11 +4,8 @@ import dto.Book;
 import dto.Transaction;
 import java.util.List;
 import java.util.Scanner;
+import dao.DatabaseService;
 
-/**
- * Library Management System - Main CLI Application
- * Provides console-based interface for library operations
- */
 public class LibraryManagementSystem {
 
     private static LoginService loginService;
@@ -18,62 +15,19 @@ public class LibraryManagementSystem {
     private static Scanner scanner;
 
     public static void main(String[] args) {
-        // Initialize services
+
         loginService = new LoginService();
         userService = new UserService();
         bookService = new BookService();
         transactionService = new TransactionService();
         scanner = new Scanner(System.in);
 
-        // Initialize application
-        initializeApplication();
-
-        // Main application loop
         runApplication();
 
-        // Cleanup
         scanner.close();
         System.out.println("Thank you for using Library Management System!");
     }
 
-    /**
-     * Initialize the application and database
-     */
-    private static void initializeApplication() {
-        System.out.println("=".repeat(60));
-        System.out.println("      LIBRARY MANAGEMENT SYSTEM");
-        System.out.println("=".repeat(60));
-        System.out.println("Initializing application...");
-
-        try {
-            // Test database connection
-            dao.DatabaseService dbTestService = new dao.DatabaseService();
-            if (dbTestService.testConnection()) {
-                System.out.println("Database connection established successfully.");
-            } else {
-                System.err.println("\nCRITICAL: Database connection failed.");
-                System.err.println("Please check your Oracle Database configuration in 'src/utils/DatabaseConnection.java'.");
-                System.err.println("Ensure the database is running and your credentials are correct.");
-                System.err.println("Exiting application.");
-                System.exit(1);
-            }
-
-            // Initialize default admin user if needed
-            loginService.initializeAdminUser();
-
-            System.out.println("Application initialized successfully.");
-            System.out.println("=".repeat(60));
-
-        } catch (Exception e) {
-            System.err.println("An unexpected error occurred during initialization: " + e.getMessage());
-            System.err.println("Please check your database configuration and table schema.");
-            System.exit(1);
-        }
-    }
-
-    /**
-     * Main application loop
-     */
     private static void runApplication() {
         boolean running = true;
 
@@ -94,10 +48,7 @@ public class LibraryManagementSystem {
         }
     }
 
-    /**
-     * Show login menu
-     * @return true to continue, false to exit
-     */
+
     private static boolean showLoginMenu() {
         System.out.println("\n" + "=".repeat(50));
         System.out.println("           LOGIN MENU");
@@ -109,11 +60,12 @@ public class LibraryManagementSystem {
 
         try {
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
-                    return handleLogin();
+                    handleLogin();
+                    return true; // Always return true to continue the main loop after login attempt
                 case 2:
                     System.out.println("Goodbye!");
                     return false;
@@ -123,40 +75,36 @@ public class LibraryManagementSystem {
             }
         } catch (Exception e) {
             System.out.println("Invalid input. Please enter a number.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
             return true;
         }
     }
 
-    /**
-     * Handle user login
-     * @return true to continue, false to exit
-     */
-    private static boolean handleLogin() {
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("LOGIN");
-        System.out.println("-".repeat(30));
+    private static void handleLogin() { // MODIFIED: Changed return type to void for consistency
+        boolean success;
+        do {
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("LOGIN");
+            System.out.println("-".repeat(30));
 
-        System.out.print("Email: ");
-        String email = scanner.nextLine().trim();
+            System.out.print("Email: ");
+            String email = scanner.nextLine().trim();
 
-        System.out.print("Password: ");
-        String password = scanner.nextLine().trim();
+            System.out.print("Password: ");
+            String password = scanner.nextLine().trim();
 
-        boolean loginSuccess = loginService.login(email, password);
+            success = loginService.login(email, password);
 
-        if (!loginSuccess) {
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
-        }
-
-        return true;
+            if (!success) {
+                System.out.print("Login failed. Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
+            }
+        } while (!success);
     }
 
-    /**
-     * Show admin menu
-     * @return true to continue, false to exit
-     */
     private static boolean showAdminMenu() {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("         ADMIN PANEL - " + loginService.getCurrentUserName());
@@ -188,7 +136,7 @@ public class LibraryManagementSystem {
 
         try {
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1: handleAddUser(); break;
@@ -210,7 +158,7 @@ public class LibraryManagementSystem {
             }
         } catch (Exception e) {
             System.out.println("Invalid input. Please enter a number.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
         }
 
         if (loginService.isLoggedIn()) {
@@ -221,10 +169,7 @@ public class LibraryManagementSystem {
         return true;
     }
 
-    /**
-     * Show user menu
-     * @return true to continue, false to exit
-     */
+
     private static boolean showUserMenu() {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("         STUDENT MENU - " + loginService.getCurrentUserName());
@@ -257,7 +202,7 @@ public class LibraryManagementSystem {
             }
         } catch (Exception e) {
             System.out.println("Invalid input. Please enter a number.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
         }
 
         if (loginService.isLoggedIn()) {
@@ -268,167 +213,216 @@ public class LibraryManagementSystem {
         return true;
     }
 
-    /**
-     * Handle adding new user
-     */
+    // MODIFIED: Added retry logic
     private static void handleAddUser() {
-        if (!loginService.hasAdminPermission()) return;
+        boolean success;
+        do {
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("ADD NEW USER");
+            System.out.println("-".repeat(30));
 
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("ADD NEW USER");
-        System.out.println("-".repeat(30));
+            System.out.print("Name: ");
+            String name = scanner.nextLine().trim();
 
-        System.out.print("Name: ");
-        String name = scanner.nextLine().trim();
+            System.out.print("Email: ");
+            String email = scanner.nextLine().trim();
 
-        System.out.print("Email: ");
-        String email = scanner.nextLine().trim();
+            System.out.print("Password: ");
+            String password = scanner.nextLine().trim();
 
-        System.out.print("Password: ");
-        String password = scanner.nextLine().trim();
+            System.out.print("User Type (USER/ADMIN): ");
+            String userType = scanner.nextLine().trim();
 
-        System.out.print("User Type (USER/ADMIN): ");
-        String userType = scanner.nextLine().trim();
+            // NOTE: This assumes userService.createUser now returns a boolean
+            success = userService.createUser(name, email, password, userType);
 
-        userService.createUser(name, email, password, userType);
+            if (!success) {
+                System.out.print("User creation failed (e.g., invalid email or email already exists). Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
+            }
+        } while (!success);
     }
 
-    /**
-     * Handle removing user
-     */
+    // MODIFIED: Added retry logic
     private static void handleRemoveUser() {
-        if (!loginService.hasAdminPermission()) return;
+        boolean success;
+        do {
+            userService.displayAllUsers();
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("REMOVE USER");
+            System.out.println("-".repeat(30));
 
-        userService.displayAllUsers();
+            try {
+                System.out.print("Enter User ID to remove (or 0 to cancel): ");
+                int userId = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
 
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("REMOVE USER");
-        System.out.println("-".repeat(30));
+                if (userId == 0) {
+                    System.out.println("Operation cancelled.");
+                    return; // Exit the method
+                }
 
-        try {
-            System.out.print("Enter User ID to remove: ");
-            int userId = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+                if (userId == loginService.getCurrentUserId()) {
+                    System.out.println("You cannot delete your own account.");
+                    success = false; // Mark as failure to prompt retry
+                } else {
+                    System.out.print("Are you sure? (y/N): ");
+                    String confirm = scanner.nextLine().trim().toLowerCase();
 
-            if (userId == loginService.getCurrentUserId()) {
-                System.out.println("You cannot delete your own account.");
-                return;
+                    if (confirm.equals("y") || confirm.equals("yes")) {
+                        // NOTE: This assumes userService.deleteUser now returns a boolean
+                        success = userService.deleteUser(userId);
+                    } else {
+                        System.out.println("Operation cancelled.");
+                        return; // Exit the method
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine();
+                success = false; // Mark as failure
             }
 
-            System.out.print("Are you sure? (y/N): ");
-            String confirm = scanner.nextLine().trim().toLowerCase();
-
-            if (confirm.equals("y") || confirm.equals("yes")) {
-                userService.deleteUser(userId);
-            } else {
-                System.out.println("Operation cancelled.");
+            if (!success) {
+                System.out.print("User removal failed (e.g., user not found). Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
             }
-        } catch (Exception e) {
-            System.out.println("Invalid input. Please enter a valid number.");
-            scanner.nextLine(); // Clear invalid input
-        }
+        } while (!success);
     }
 
-    /**
-     * Handle adding new book
-     */
+    // MODIFIED: Added retry logic
     private static void handleAddBook() {
-        if (!loginService.hasAdminPermission()) return;
+        boolean success;
+        do {
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("ADD NEW BOOK");
+            System.out.println("-".repeat(30));
 
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("ADD NEW BOOK");
-        System.out.println("-".repeat(30));
+            try {
+                System.out.print("Title: ");
+                String title = scanner.nextLine().trim();
 
-        try {
-            System.out.print("Title: ");
-            String title = scanner.nextLine().trim();
+                System.out.print("Author: ");
+                String author = scanner.nextLine().trim();
 
-            System.out.print("Author: ");
-            String author = scanner.nextLine().trim();
+                System.out.print("Category: ");
+                String category = scanner.nextLine().trim();
 
-            System.out.print("Category: ");
-            String category = scanner.nextLine().trim();
+                System.out.print("Quantity: ");
+                int quantity = scanner.nextInt();
 
-            System.out.print("Quantity: ");
-            int quantity = scanner.nextInt();
+                System.out.print("Floor: ");
+                int floor = scanner.nextInt();
+                scanner.nextLine();
 
-            System.out.print("Floor: ");
-            int floor = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+                System.out.print("Shelve: ");
+                String shelve = scanner.nextLine().trim();
 
-            System.out.print("Shelve: ");
-            String shelve = scanner.nextLine().trim();
-
-            bookService.createBook(title, author, category, quantity, floor, shelve);
-        } catch (Exception e) {
-            System.out.println("Invalid input. Please enter valid data.");
-            scanner.nextLine(); // Clear invalid input
-        }
-    }
-
-    /**
-     * Handle removing book
-     */
-    private static void handleRemoveBook() {
-        if (!loginService.hasAdminPermission()) return;
-
-        bookService.displayAllBooks();
-
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("REMOVE BOOK");
-        System.out.println("-".repeat(30));
-
-        try {
-            System.out.print("Enter Book ID to remove: ");
-            int bookId = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            System.out.print("Are you sure? (y/N): ");
-            String confirm = scanner.nextLine().trim().toLowerCase();
-
-            if (confirm.equals("y") || confirm.equals("yes")) {
-                bookService.deleteBook(bookId);
-            } else {
-                System.out.println("Operation cancelled.");
+                // NOTE: This assumes bookService.createBook now returns a boolean
+                success = bookService.createBook(title, author, category, quantity, floor, shelve);
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter valid data.");
+                scanner.nextLine();
+                success = false;
             }
-        } catch (Exception e) {
-            System.out.println("Invalid input. Please enter a valid number.");
-            scanner.nextLine(); // Clear invalid input
-        }
+
+            if (!success) {
+                System.out.print("Failed to add book. Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
+            }
+        } while (!success);
     }
 
-    /**
-     * Handle updating book quantity
-     */
+    // MODIFIED: Added retry logic
+    private static void handleRemoveBook() {
+        boolean success;
+        do {
+            bookService.displayAllBooks();
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("REMOVE BOOK");
+            System.out.println("-".repeat(30));
+            try {
+                System.out.print("Enter Book ID to remove (or 0 to cancel): ");
+                int bookId = scanner.nextInt();
+                scanner.nextLine();
+
+                if (bookId == 0) {
+                    System.out.println("Operation cancelled.");
+                    return;
+                }
+
+                System.out.print("Are you sure? (y/N): ");
+                String confirm = scanner.nextLine().trim().toLowerCase();
+
+                if (confirm.equals("y") || confirm.equals("yes")) {
+                    // NOTE: This assumes bookService.deleteBook now returns a boolean
+                    success = bookService.deleteBook(bookId);
+                } else {
+                    System.out.println("Operation cancelled.");
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine();
+                success = false;
+            }
+
+            if (!success) {
+                System.out.print("Failed to remove book (e.g., book not found). Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
+            }
+        } while (!success);
+    }
+
+    // MODIFIED: Added retry logic
     private static void handleUpdateBookQuantity() {
-        if (!loginService.hasAdminPermission()) return;
+        boolean success;
+        do {
+            bookService.displayAllBooks();
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("UPDATE BOOK QUANTITY");
+            System.out.println("-".repeat(30));
 
-        bookService.displayAllBooks();
+            try {
+                System.out.print("Enter Book ID: ");
+                int bookId = scanner.nextInt();
 
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("UPDATE BOOK QUANTITY");
-        System.out.println("-".repeat(30));
+                System.out.print("Enter New Quantity: ");
+                int newQuantity = scanner.nextInt();
+                scanner.nextLine();
 
-        try {
-            System.out.print("Enter Book ID: ");
-            int bookId = scanner.nextInt();
+                // NOTE: This assumes bookService.updateBookQuantity now returns a boolean
+                success = bookService.updateBookQuantity(bookId, newQuantity);
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter valid numbers.");
+                scanner.nextLine();
+                success = false;
+            }
 
-            System.out.print("Enter New Quantity: ");
-            int newQuantity = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            bookService.updateBookQuantity(bookId, newQuantity);
-        } catch (Exception e) {
-            System.out.println("Invalid input. Please enter valid numbers.");
-            scanner.nextLine(); // Clear invalid input
-        }
+            if (!success) {
+                System.out.print("Failed to update quantity (e.g., book not found). Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
+            }
+        } while (!success);
     }
 
-    /**
-     * Handle approving or denying requests
-     */
+
     private static void handleApproveOrDenyRequest() {
-        if (!loginService.hasAdminPermission()) return;
 
         List<Transaction> pendingTransactions = transactionService.getPendingTransactions();
 
@@ -446,13 +440,13 @@ public class LibraryManagementSystem {
         try {
             System.out.print("Enter Transaction ID: ");
             int transactionId = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             System.out.println("1. Approve");
             System.out.println("2. Deny");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -470,11 +464,8 @@ public class LibraryManagementSystem {
         }
     }
 
-    /**
-     * Handle admin return book with fine collection
-     */
+
     private static void handleAdminReturnBook() {
-        if (!loginService.hasAdminPermission()) return;
 
         List<Transaction> issuedBooks = transactionService.getApprovedTransactions();
 
@@ -494,7 +485,7 @@ public class LibraryManagementSystem {
             int transactionId = scanner.nextInt();
             scanner.nextLine(); // Consume newline
 
-            // Get transaction details for fine calculation
+
             Transaction transaction = transactionService.getTransactionById(transactionId);
             if (transaction == null) {
                 System.out.println("Transaction not found.");
@@ -551,9 +542,7 @@ public class LibraryManagementSystem {
         }
     }
 
-    /**
-     * Handle searching books
-     */
+
     private static void handleSearchBooks() {
         System.out.println("\n" + "-".repeat(30));
         System.out.println("SEARCH BOOKS");
@@ -566,7 +555,7 @@ public class LibraryManagementSystem {
 
         try {
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             System.out.print("Enter search term: ");
             String searchTerm = scanner.nextLine().trim();
@@ -596,39 +585,44 @@ public class LibraryManagementSystem {
             }
         } catch (Exception e) {
             System.out.println("Invalid input. Please try again.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
         }
     }
 
-    /**
-     * Handle requesting book issue
-     */
+    // MODIFIED: Added retry logic
     private static void handleRequestBookIssue() {
-        if (!loginService.hasUserPermission()) return;
+        boolean success;
+        do {
+            bookService.displayAvailableBooks();
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("REQUEST BOOK ISSUE");
+            System.out.println("-".repeat(30));
 
-        bookService.displayAvailableBooks();
+            try {
+                System.out.print("Enter Book ID to request: ");
+                int bookId = scanner.nextInt();
+                scanner.nextLine();
 
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("REQUEST BOOK ISSUE");
-        System.out.println("-".repeat(30));
+                // NOTE: This assumes transactionService.requestBookIssue now returns a boolean
+                success = transactionService.requestBookIssue(loginService.getCurrentUserId(), bookId);
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a valid Book ID.");
+                scanner.nextLine();
+                success = false;
+            }
 
-        try {
-            System.out.print("Enter Book ID to request: ");
-            int bookId = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            transactionService.requestBookIssue(loginService.getCurrentUserId(), bookId);
-        } catch (Exception e) {
-            System.out.println("Invalid input. Please enter a valid Book ID.");
-            scanner.nextLine(); // Clear invalid input
-        }
+            if (!success) {
+                System.out.print("Failed to request book (e.g., book not available or ID is invalid). Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
+            }
+        } while (!success);
     }
 
-    /**
-     * Handle viewing user's issued books
-     */
+
     private static void handleViewMyIssuedBooks() {
-        if (!loginService.hasUserPermission()) return;
 
         transactionService.displayUserActiveTransactions(
                 loginService.getCurrentUserId(),
@@ -636,11 +630,8 @@ public class LibraryManagementSystem {
         );
     }
 
-    /**
-     * Handle viewing user's all requests
-     */
+
     private static void handleViewMyAllRequests() {
-        if (!loginService.hasUserPermission()) return;
 
         transactionService.displayUserTransactions(
                 loginService.getCurrentUserId(),
@@ -648,43 +639,38 @@ public class LibraryManagementSystem {
         );
     }
 
-    /**
-     * Handle password change
-     */
+    // MODIFIED: Added retry logic
     private static void handleChangePassword() {
-        if (!loginService.hasUserPermission()) return;
+        boolean success;
+        do {
+            System.out.println("\n" + "-".repeat(30));
+            System.out.println("CHANGE PASSWORD");
+            System.out.println("-".repeat(30));
 
-        System.out.println("\n" + "-".repeat(30));
-        System.out.println("CHANGE PASSWORD");
-        System.out.println("-".repeat(30));
+            System.out.print("Current Password: ");
+            String currentPassword = scanner.nextLine().trim();
 
-        System.out.print("Current Password: ");
-        String currentPassword = scanner.nextLine().trim();
+            System.out.print("New Password: ");
+            String newPassword = scanner.nextLine().trim();
 
-        System.out.print("New Password: ");
-        String newPassword = scanner.nextLine().trim();
+            System.out.print("Confirm New Password: ");
+            String confirmPassword = scanner.nextLine().trim();
 
-        System.out.print("Confirm New Password: ");
-        String confirmPassword = scanner.nextLine().trim();
+            if (!newPassword.equals(confirmPassword)) {
+                System.out.println("New passwords do not match.");
+                success = false; // Mark as failure
+            } else {
+                // NOTE: This assumes loginService.changePassword now returns a boolean
+                success = loginService.changePassword(currentPassword, newPassword);
+            }
 
-        if (!newPassword.equals(confirmPassword)) {
-            System.out.println("New passwords do not match.");
-            return;
-        }
-
-        loginService.changePassword(currentPassword, newPassword);
-    }
-
-    /**
-     * Display welcome message and instructions
-     */
-    private static void displayWelcomeMessage() {
-        System.out.println("Welcome to the Library Management System!");
-        System.out.println("Please log in to continue.");
-        System.out.println();
-        System.out.println("Default Admin Credentials:");
-        System.out.println("Email: admin@library.com");
-        System.out.println("Password: admin123");
-        System.out.println();
+            if (!success) {
+                System.out.print("Failed to change password (e.g., current password incorrect). Do you want to retry? (y/N): ");
+                String retry = scanner.nextLine().trim().toLowerCase();
+                if (!(retry.equals("y") || retry.equals("yes"))) {
+                    break;
+                }
+            }
+        } while (!success);
     }
 }

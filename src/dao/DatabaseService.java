@@ -130,9 +130,9 @@ public class DatabaseService {
      * Check if database connection is working
      * @return true if connection is successful, false otherwise
      */
-    public boolean testConnection() {
-        return dbConnection.testConnection();
-    }
+//    public boolean testConnection() {
+//        return dbConnection.testConnection();
+//    }
     
     /**
      * Initialize database tables (if needed)

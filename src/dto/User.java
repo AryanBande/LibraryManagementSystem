@@ -1,9 +1,6 @@
 package dto;
 
-/**
- * User Data Transfer Object
- * Represents a user in the library management system
- */
+
 public class User {
     private int id;
     private String name;
@@ -14,7 +11,6 @@ public class User {
     // Default constructor
     public User() {}
     
-    // Constructor with all fields
     public User(int id, String name, String email, String password, String userType) {
         this.id = id;
         this.name = name;
@@ -22,8 +18,7 @@ public class User {
         this.password = password;
         this.userType = userType;
     }
-    
-    // Constructor without id (for new user creation)
+
     public User(String name, String email, String password, String userType) {
         this.name = name;
         this.email = email;
@@ -31,7 +26,6 @@ public class User {
         this.userType = userType;
     }
     
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -72,12 +66,10 @@ public class User {
         this.userType = userType;
     }
     
-    // Check if user is admin
     public boolean isAdmin() {
         return "ADMIN".equalsIgnoreCase(userType);
     }
     
-    // Check if user is regular user
     public boolean isUser() {
         return "USER".equalsIgnoreCase(userType);
     }
