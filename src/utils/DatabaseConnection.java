@@ -21,6 +21,8 @@ public class DatabaseConnection {
             Class.forName("oracle.jdbc.driver.OracleDriver");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Oracle JDBC Driver not found", e);
+        }catch (Exception e) {
+            System.err.println("Unexpected error");
         }
     }
     
@@ -51,6 +53,10 @@ public class DatabaseConnection {
             return connection;
         } catch (SQLException e) {
             System.err.println("Database connection failed: " + e.getMessage());
+            throw e;
+        }
+        catch (Exception e) {
+            System.err.println("Unexpected error");
             throw e;
         }
     }

@@ -37,8 +37,14 @@ public class BookService {
                 return false;
             }
             
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for book creation: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during book creation: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error creating book: " + e.getMessage());
+            System.err.println("Unexpected error during book creation: " + e.getMessage());
             return false;
         }
     }
@@ -47,8 +53,11 @@ public class BookService {
     public List<Book> getAllBooks() {
         try {
             return bookDao.getAllBooks();
+        }  catch (RuntimeException e) {
+            System.err.println("System error while getting all books: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error getting all books: " + e.getMessage());
+            System.err.println("Unexpected error while getting all books: " + e.getMessage());
             return null;
         }
     }
@@ -57,8 +66,11 @@ public class BookService {
     public List<Book> getAvailableBooks() {
         try {
             return bookDao.getAvailableBooks();
+        } catch (RuntimeException e) {
+            System.err.println("System error while getting available books: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error getting available books: " + e.getMessage());
+            System.err.println("Unexpected error while getting available books: " + e.getMessage());
             return null;
         }
     }
@@ -72,8 +84,14 @@ public class BookService {
             }
             
             return bookDao.getBookById(bookId);
+        }catch (IllegalArgumentException e) {
+            System.err.println("Invalid argument for book ID lookup: " + e.getMessage());
+            return null;
+        } catch (RuntimeException e) {
+            System.err.println("System error while getting book by ID " + bookId + ": " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error getting book by ID: " + e.getMessage());
+            System.err.println("Unexpected error while getting book by ID " + bookId + ": " + e.getMessage());
             return null;
         }
     }
@@ -87,8 +105,14 @@ public class BookService {
             }
             
             return bookDao.searchBooks(searchTerm.trim());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid search term: " + e.getMessage());
+            return null;
+        } catch (RuntimeException e) {
+            System.err.println("System error during book search: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error searching books: " + e.getMessage());
+            System.err.println("Unexpected error during book search: " + e.getMessage());
             return null;
         }
     }
@@ -102,8 +126,14 @@ public class BookService {
             }
             
             return bookDao.searchBooksByTitle(title.trim());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid title for search: " + e.getMessage());
+            return null;
+        } catch (RuntimeException e) {
+            System.err.println("System error during title search: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error searching books by title: " + e.getMessage());
+            System.err.println("Unexpected error during title search: " + e.getMessage());
             return null;
         }
     }
@@ -117,8 +147,14 @@ public class BookService {
             }
             
             return bookDao.searchBooksByAuthor(author.trim());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid author for search: " + e.getMessage());
+            return null;
+        } catch (RuntimeException e) {
+            System.err.println("System error during author search: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error searching books by author: " + e.getMessage());
+            System.err.println("Unexpected error during author search: " + e.getMessage());
             return null;
         }
     }
@@ -209,8 +245,14 @@ public class BookService {
                 return false;
             }
             
+        }  catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for quantity update: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during quantity update: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error updating book quantity: " + e.getMessage());
+            System.err.println("Unexpected error during quantity update: " + e.getMessage());
             return false;
         }
     }
@@ -241,8 +283,14 @@ public class BookService {
                 return false;
             }
             
+        }catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for book deletion: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during book deletion: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error deleting book: " + e.getMessage());
+            System.err.println("Unexpected error during book deletion: " + e.getMessage());
             return false;
         }
     }
@@ -252,8 +300,12 @@ public class BookService {
         try {
             List<Book> books = getAllBooks();
             displayBooksList(books, "ALL BOOKS");
+        } catch (RuntimeException e) {
+            System.err.println("System error while displaying all books: " + e.getMessage());
+            System.out.println("Unable to display books at this time. Please try again later.");
         } catch (Exception e) {
-            System.err.println("Error displaying all books: " + e.getMessage());
+            System.err.println("Unexpected error while displaying all books: " + e.getMessage());
+            System.out.println("Unable to display books at this time. Please try again later.");
         }
     }
     
@@ -262,8 +314,12 @@ public class BookService {
         try {
             List<Book> books = getAvailableBooks();
             displayBooksList(books, "AVAILABLE BOOKS");
+        } catch (RuntimeException e) {
+            System.err.println("System error while displaying available books: " + e.getMessage());
+            System.out.println("Unable to display available books at this time. Please try again later.");
         } catch (Exception e) {
-            System.err.println("Error displaying available books: " + e.getMessage());
+            System.err.println("Unexpected error while displaying available books: " + e.getMessage());
+            System.out.println("Unable to display available books at this time. Please try again later.");
         }
     }
     
@@ -319,8 +375,14 @@ public class BookService {
             }
             
             return bookDao.getBooksByCategory(category.trim());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid category: " + e.getMessage());
+            return new java.util.ArrayList<>();
+        } catch (RuntimeException e) {
+            System.err.println("System error while getting books by category: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error getting books by category: " + e.getMessage());
+            System.err.println("Unexpected error while getting books by category: " + e.getMessage());
             return null;
         }
     }

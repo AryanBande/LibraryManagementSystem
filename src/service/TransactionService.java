@@ -57,8 +57,16 @@ public class TransactionService {
                 return false;
             }
 
+        }catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for book request: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during book request: " + e.getMessage());
+            System.out.println("Book request service is temporarily unavailable. Please try again later.");
+            return false;
         } catch (Exception e) {
-            System.err.println("Error requesting book issue: " + e.getMessage());
+            System.err.println("Unexpected error during book request: " + e.getMessage());
+            System.out.println("An unexpected error occurred. Please try again.");
             return false;
         }
     }
@@ -100,8 +108,14 @@ public class TransactionService {
             System.out.println("Book request approved successfully.");
             return true;
 
+        }catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for request approval: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during request approval: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error approving book request: " + e.getMessage());
+            System.err.println("Unexpected error during request approval: " + e.getMessage());
             return false;
         }
     }
@@ -130,8 +144,14 @@ public class TransactionService {
                 return false;
             }
 
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for request denial: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during request denial: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error denying book request: " + e.getMessage());
+            System.err.println("Unexpected error during request denial: " + e.getMessage());
             return false;
         }
     }
@@ -233,8 +253,14 @@ public class TransactionService {
 
             return true;
 
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for book return: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during book return: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error returning book: " + e.getMessage());
+            System.err.println("Unexpected error during book return: " + e.getMessage());
             return false;
         }
     }

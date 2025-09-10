@@ -42,8 +42,14 @@ public class UserService {
                 return false;
             }
             
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for user creation: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during user creation: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error creating user: " + e.getMessage());
+            System.err.println("Unexpected error during user creation: " + e.getMessage());
             return false;
         }
     }
@@ -159,8 +165,14 @@ public class UserService {
                 return false;
             }
             
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for user deletion: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during user deletion: " + e.getMessage());
+            return false;
         } catch (Exception e) {
-            System.err.println("Error deleting user: " + e.getMessage());
+            System.err.println("Unexpected error during user deletion: " + e.getMessage());
             return false;
         }
     }
@@ -180,8 +192,14 @@ public class UserService {
             }
             
             return userDao.getUsersByType(normalizedUserType);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid user type: " + e.getMessage());
+            return null;
+        } catch (RuntimeException e) {
+            System.err.println("System error while getting users by type: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            System.err.println("Error getting users by type: " + e.getMessage());
+            System.err.println("Unexpected error while getting users by type: " + e.getMessage());
             return null;
         }
     }
@@ -213,8 +231,12 @@ public class UserService {
             System.out.println("-".repeat(100));
             System.out.println("Total users: " + users.size());
             
+        } catch (RuntimeException e) {
+            System.err.println("System error while displaying users: " + e.getMessage());
+            System.out.println("Unable to display users at this time. Please try again later.");
         } catch (Exception e) {
-            System.err.println("Error displaying users: " + e.getMessage());
+            System.err.println("Unexpected error while displaying users: " + e.getMessage());
+            System.out.println("Unable to display users at this time. Please try again later.");
         }
     }
     

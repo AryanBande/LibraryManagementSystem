@@ -41,8 +41,17 @@ public class LoginService {
                 return false;
             }
             
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid login credentials format: " + e.getMessage());
+            System.out.println("Please check your email and password format.");
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during login: " + e.getMessage());
+            System.out.println("Login service is temporarily unavailable. Please try again later.");
+            return false;
         } catch (Exception e) {
-            System.err.println("Error during login: " + e.getMessage());
+            System.err.println("Unexpected error during login: " + e.getMessage());
+            System.out.println("An unexpected error occurred during login. Please try again.");
             return false;
         }
     }
@@ -171,8 +180,16 @@ public class LoginService {
                 return false;
             }
             
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid input for password change: " + e.getMessage());
+            return false;
+        } catch (RuntimeException e) {
+            System.err.println("System error during password change: " + e.getMessage());
+            System.out.println("Password change service is temporarily unavailable. Please try again later.");
+            return false;
         } catch (Exception e) {
-            System.err.println("Error changing password: " + e.getMessage());
+            System.err.println("Unexpected error during password change: " + e.getMessage());
+            System.out.println("An unexpected error occurred. Please try again.");
             return false;
         }
     }

@@ -42,6 +42,8 @@ public class UserDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error authenticating user: " + e.getMessage());
+        }catch (Exception e) {
+            System.err.println("Unexpected error during user authentication: " + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -70,13 +72,10 @@ public class UserDao extends DatabaseService {
             statement.setString(4, user.getUserType());
             
             int rowsAffected = statement.executeUpdate();
-//            commitTransaction(connection);
-            
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error creating user: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } finally {
             closeResources(connection, statement);
@@ -110,7 +109,9 @@ public class UserDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting user by ID: " + e.getMessage());
-        } finally {
+        }  catch (Exception e) {
+            System.err.println("Unexpected error ");
+        }finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -148,6 +149,8 @@ public class UserDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting user by email: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -184,6 +187,8 @@ public class UserDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting all users: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -221,6 +226,9 @@ public class UserDao extends DatabaseService {
             System.err.println("Error updating user: " + e.getMessage());
             rollbackTransaction(connection);
             return false;
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+            return false;
         } finally {
             closeResources(connection, statement);
         }
@@ -246,6 +254,9 @@ public class UserDao extends DatabaseService {
         } catch (SQLException e) {
             System.err.println("Error deleting user: " + e.getMessage());
             rollbackTransaction(connection);
+            return false;
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
             return false;
         } finally {
             closeResources(connection, statement);
@@ -293,6 +304,8 @@ public class UserDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting users by type: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
         } finally {
             closeResources(connection, statement, resultSet);
         }

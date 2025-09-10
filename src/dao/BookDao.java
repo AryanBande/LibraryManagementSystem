@@ -72,6 +72,8 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting book by ID: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -99,6 +101,8 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting all books: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -131,7 +135,10 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error searching books by title: " + e.getMessage());
-        } finally {
+        }catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
+        }
+        finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -163,6 +170,8 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error searching books by author: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -195,6 +204,8 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error searching books by category: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -232,6 +243,8 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error searching books: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -271,6 +284,9 @@ public class BookDao extends DatabaseService {
             System.err.println("Error updating book: " + e.getMessage());
 //            rollbackTransaction(connection);
             return false;
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
+            return false;
         } finally {
             closeResources(connection, statement);
         }
@@ -299,6 +315,9 @@ public class BookDao extends DatabaseService {
             System.err.println("Error updating book quantity: " + e.getMessage());
             rollbackTransaction(connection);
             return false;
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
+            return false;
         } finally {
             closeResources(connection, statement);
         }
@@ -324,6 +343,9 @@ public class BookDao extends DatabaseService {
         } catch (SQLException e) {
             System.err.println("Error deleting book: " + e.getMessage());
             rollbackTransaction(connection);
+            return false;
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
             return false;
         } finally {
             closeResources(connection, statement);
@@ -353,6 +375,8 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting available books: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -385,6 +409,8 @@ public class BookDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting books by category: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error:" + e.getMessage());
         } finally {
             closeResources(connection, statement, resultSet);
         }

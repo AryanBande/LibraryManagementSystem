@@ -5,21 +5,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Transaction Data Access Object
- * Handles all transaction-related database operations
- */
+
 public class TransactionDao extends DatabaseService {
     
     public TransactionDao() {
         super();
     }
     
-    /**
-     * Create a new transaction (book request)
-     * @param transaction Transaction object to create
-     * @return true if successful, false otherwise
-     */
+
     public boolean createTransaction(Transaction transaction) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -36,15 +29,18 @@ public class TransactionDao extends DatabaseService {
             statement.setDate(4, transaction.getIssueDate());
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
+
             
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
-            rollbackTransaction(connection);
+
             return false;
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+            return false;
+        }  finally {
             closeResources(connection, statement);
         }
     }
@@ -79,6 +75,8 @@ public class TransactionDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting transaction by ID: " + e.getMessage());
+        }  catch (Exception e) {
+            System.err.println("Unexpected error ");
         } finally {
             closeResources(connection, statement, resultSet);
         }
@@ -114,7 +112,9 @@ public class TransactionDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting all transactions: " + e.getMessage());
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+        }  finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -152,7 +152,9 @@ public class TransactionDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting transactions by user ID: " + e.getMessage());
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+        }  finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -188,7 +190,9 @@ public class TransactionDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting pending transactions: " + e.getMessage());
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+        }  finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -221,7 +225,9 @@ public class TransactionDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting approved transactions: " + e.getMessage());
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+        }  finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -251,7 +257,10 @@ public class TransactionDao extends DatabaseService {
             System.err.println("Error updating transaction status: " + e.getMessage());
             rollbackTransaction(connection);
             return false;
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+            return false;
+        }  finally {
             closeResources(connection, statement);
         }
     }
@@ -284,7 +293,10 @@ public class TransactionDao extends DatabaseService {
             System.err.println("Error returning book: " + e.getMessage());
             rollbackTransaction(connection);
             return false;
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+            return false;
+        }  finally {
             closeResources(connection, statement);
         }
     }
@@ -331,7 +343,9 @@ public class TransactionDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting active transactions by user ID: " + e.getMessage());
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+        }  finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -369,7 +383,9 @@ public class TransactionDao extends DatabaseService {
             
         } catch (SQLException e) {
             System.err.println("Error getting transactions by status: " + e.getMessage());
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
+        }  finally {
             closeResources(connection, statement, resultSet);
         }
         
@@ -393,13 +409,16 @@ public class TransactionDao extends DatabaseService {
             statement.setInt(1, transactionId);
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
+
             
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error deleting transaction: " + e.getMessage());
-            rollbackTransaction(connection);
+
+            return false;
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
             return false;
         } finally {
             closeResources(connection, statement);
@@ -421,8 +440,8 @@ public class TransactionDao extends DatabaseService {
             transaction.setUserName(resultSet.getString("user_name"));
             transaction.setBookTitle(resultSet.getString("book_title"));
             transaction.setBookAuthor(resultSet.getString("book_author"));
-        } catch (SQLException e) {
-            // These fields might not be available in all queries, so ignore
+        } catch (Exception e) {
+            System.err.println("Unexpected error ");
         }
         
         return transaction;

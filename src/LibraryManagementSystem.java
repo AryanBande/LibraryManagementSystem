@@ -2,6 +2,8 @@ import service.*;
 import dto.User;
 import dto.Book;
 import dto.Transaction;
+
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import dao.DatabaseService;
@@ -40,9 +42,10 @@ public class LibraryManagementSystem {
                 } else {
                     running = showUserMenu();
                 }
-            } catch (Exception e) {
-                System.err.println("An error occurred: " + e.getMessage());
-                System.out.println("Press Enter to continue...");
+            } catch (RuntimeException e) {
+                System.err.println("A critical system error occurred: " + e.getMessage());
+
+                System.out.println("Please contact support. Press Enter to continue...");
                 scanner.nextLine();
             }
         }
@@ -73,6 +76,10 @@ public class LibraryManagementSystem {
                     System.out.println("Invalid choice. Please try again.");
                     return true;
             }
+        }catch (RuntimeException e) { // A catch-all for unexpected database/runtime errors
+            System.err.println("A critical system error occurred: " + e.getMessage());
+            scanner.nextLine();
+            return true;
         } catch (Exception e) {
             System.out.println("Invalid input. Please enter a number.");
             scanner.nextLine();
@@ -99,6 +106,10 @@ public class LibraryManagementSystem {
                 System.out.print("Login failed. Do you want to retry? (y/N): ");
                 String retry = scanner.nextLine().trim().toLowerCase();
                 if (!(retry.equals("y") || retry.equals("yes"))) {
+                    if(!(retry.equals("n") || retry.equals("no")))
+                    {
+                        System.out.print("invalid entry. Going back !!! ");
+                    }
                     break;
                 }
             }
@@ -156,8 +167,12 @@ public class LibraryManagementSystem {
                 case 15: return false;
                 default: System.out.println("Invalid choice. Please try again.");
             }
-        } catch (Exception e) {
+        }catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number.");
+            scanner.nextLine();
+            return true;
+        } catch (Exception e) {
+            System.err.println("unexpected error occured.");
             scanner.nextLine();
         }
 
@@ -187,7 +202,7 @@ public class LibraryManagementSystem {
 
         try {
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1: bookService.displayAvailableBooks(); break;
@@ -200,6 +215,9 @@ public class LibraryManagementSystem {
                 case 8: return false;
                 default: System.out.println("Invalid choice. Please try again.");
             }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.nextLine();
         } catch (Exception e) {
             System.out.println("Invalid input. Please enter a number.");
             scanner.nextLine();
@@ -248,7 +266,7 @@ public class LibraryManagementSystem {
 
     // MODIFIED: Added retry logic
     private static void handleRemoveUser() {
-        boolean success;
+        boolean success = false;
         do {
             userService.displayAllUsers();
             System.out.println("\n" + "-".repeat(30));
@@ -280,6 +298,14 @@ public class LibraryManagementSystem {
                         return; // Exit the method
                     }
                 }
+            }catch (InputMismatchException e) {
+                System.err.println("Invalid input. Please enter a valid User ID number.");
+                scanner.nextLine();
+            } catch (IllegalStateException e) {
+                // Thrown by the service if the user has pending books/fines
+                System.err.println("Cannot remove user: " + e.getMessage());
+            } catch (RuntimeException e) {
+                System.err.println("Database error while removing user. Please try again.");
             } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a valid number.");
                 scanner.nextLine();
