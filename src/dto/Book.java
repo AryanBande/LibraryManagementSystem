@@ -1,9 +1,5 @@
 package dto;
 
-/**
- * Book Data Transfer Object
- * Represents a book in the library management system
- */
 public class Book {
     private int id;
     private String title;
@@ -13,21 +9,8 @@ public class Book {
     private int floor;
     private String shelve;
     
-    // Default constructor
     public Book() {}
     
-    // Constructor with all fields
-    public Book(int id, String title, String author, String category, int quantity, int floor, String shelve) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.category = category;
-        this.quantity = quantity;
-        this.floor = floor;
-        this.shelve = shelve;
-    }
-    
-    // Constructor without id (for new book creation)
     public Book(String title, String author, String category, int quantity, int floor, String shelve) {
         this.title = title;
         this.author = author;
@@ -37,7 +20,6 @@ public class Book {
         this.shelve = shelve;
     }
     
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -94,19 +76,16 @@ public class Book {
         this.shelve = shelve;
     }
     
-    // Check if book is available
     public boolean isAvailable() {
         return quantity > 0;
     }
     
-    // Decrement quantity when book is issued
     public void decrementQuantity() {
         if (quantity > 0) {
             quantity--;
         }
     }
     
-    // Increment quantity when book is returned
     public void incrementQuantity() {
         quantity++;
     }
@@ -117,7 +96,6 @@ public class Book {
                            id, title, author, category, quantity, floor, shelve);
     }
     
-    // Method to display book info in a formatted way for console output
     public String getDisplayInfo() {
         String availability = quantity > 0 ? "Available (" + quantity + ")" : "Not Available";
         return String.format("ID: %-3d | Title: %-25s | Author: %-20s | Category: %-12s | %s | Location: Floor %d, Shelf %s", 

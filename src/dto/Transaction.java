@@ -4,41 +4,24 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-/**
- * Transaction Data Transfer Object
- * Represents a book transaction (issue/return) in the library management system
- */
 public class Transaction {
     private int id;
     private int userId;
     private int bookId;
-    private String status; // 'PENDING', 'APPROVED', 'DENIED'
+    private String status;
     private Date issueDate;
     private Date returnDate;
 
-    // Additional fields for display purposes
     private String userName;
     private String bookTitle;
     private String bookAuthor;
 
-    // Fine system constants
     private static final int RETURN_PERIOD_DAYS = 7;
     private static final double FINE_PER_DAY = 10.0;
 
-    // Default constructor
     public Transaction() {}
 
-    // Constructor with all fields
-//    public Transaction(int id, int userId, int bookId, String status, Date issueDate, Date returnDate) {
-//        this.id = id;
-//        this.userId = userId;
-//        this.bookId = bookId;
-//        this.status = status;
-//        this.issueDate = issueDate;
-//        this.returnDate = returnDate;
-//    }
 
-    // Constructor without id (for new transaction creation)
     public Transaction(int userId, int bookId, String status) {
         this.userId = userId;
         this.bookId = bookId;
@@ -46,7 +29,6 @@ public class Transaction {
         this.issueDate = new Date(System.currentTimeMillis());
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -132,7 +114,6 @@ public class Transaction {
         return "DENIED".equalsIgnoreCase(status);
     }
 
-    // Status update methods
     public void approve() {
         this.status = "APPROVED";
     }
@@ -141,51 +122,35 @@ public class Transaction {
         this.status = "DENIED";
     }
 
-    // Check if transaction is active (approved and not returned)
     public boolean isActive() {
         return isApproved() && returnDate == null;
     }
 
-    /**
-     * Calculate due date (issue date + 7 days)
-     * @return Due date
-     */
+
     public LocalDate getDueDate() {
         if (issueDate == null) return null;
         return issueDate.toLocalDate().plusDays(RETURN_PERIOD_DAYS);
     }
 
-    /**
-     * Check if book is overdue
-     * @return true if overdue, false otherwise
-     */
+
     public boolean isOverdue() {
         if (issueDate == null || !isActive()) return false;
         return LocalDate.now().isAfter(getDueDate());
     }
 
-    /**
-     * Calculate overdue days
-     * @return Number of overdue days (0 if not overdue)
-     */
+
     public long getOverdueDays() {
         if (!isOverdue()) return 0;
         return ChronoUnit.DAYS.between(getDueDate(), LocalDate.now());
     }
 
-    /**
-     * Calculate current fine amount
-     * @return Fine amount in rupees
-     */
+
     public double calculateFine() {
         long overdueDays = getOverdueDays();
         return overdueDays > 0 ? overdueDays * FINE_PER_DAY : 0.0;
     }
 
-    /**
-     * Get fine status as string
-     * @return Fine status description
-     */
+
     public String getFineStatus() {
         if (!isActive()) return "N/A";
 
@@ -202,10 +167,7 @@ public class Transaction {
         }
     }
 
-    /**
-     * Get days remaining until due date
-     * @return Days remaining (negative if overdue)
-     */
+
     public long getDaysUntilDue() {
         if (issueDate == null || !isActive()) return 0;
         return ChronoUnit.DAYS.between(LocalDate.now(), getDueDate());

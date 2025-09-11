@@ -197,7 +197,6 @@ public class TransactionService {
 
     public boolean adminReturnBook(int transactionId, boolean collectFine) {
         try {
-            // Get transaction
             Transaction transaction = transactionDao.getTransactionById(transactionId);
             if (transaction == null) {
                 System.out.println("Transaction not found.");

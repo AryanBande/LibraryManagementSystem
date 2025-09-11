@@ -45,11 +45,7 @@ public class TransactionDao extends DatabaseService {
         }
     }
     
-    /**
-     * Get transaction by ID
-     * @param transactionId Transaction ID
-     * @return Transaction object if found, null otherwise
-     */
+
     public Transaction getTransactionById(int transactionId) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -121,11 +117,7 @@ public class TransactionDao extends DatabaseService {
         return transactions;
     }
     
-    /**
-     * Get transactions by user ID
-     * @param userId User ID
-     * @return List of transactions for the user
-     */
+
     public List<Transaction> getTransactionsByUserId(int userId) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -161,10 +153,7 @@ public class TransactionDao extends DatabaseService {
         return transactions;
     }
     
-    /**
-     * Get pending transactions (requests waiting for approval)
-     * @return List of pending transactions
-     */
+
     public List<Transaction> getPendingTransactions() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -249,13 +238,11 @@ public class TransactionDao extends DatabaseService {
             statement.setInt(2, transactionId);
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
-            
+
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error updating transaction status: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } catch (Exception e) {
             System.err.println("Unexpected error ");
@@ -264,13 +251,7 @@ public class TransactionDao extends DatabaseService {
             closeResources(connection, statement);
         }
     }
-    
-    /**
-     * Mark book as returned
-     * @param transactionId Transaction ID
-     * @param returnDate Return date
-     * @return true if successful, false otherwise
-     */
+
     public boolean returnBook(int transactionId, Date returnDate) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -285,13 +266,11 @@ public class TransactionDao extends DatabaseService {
             statement.setInt(2, transactionId);
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
             
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error returning book: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } catch (Exception e) {
             System.err.println("Unexpected error ");
@@ -301,22 +280,13 @@ public class TransactionDao extends DatabaseService {
         }
     }
     
-    /**
-     * Check if user has already requested a specific book (pending or approved)
-     * @param userId User ID
-     * @param bookId Book ID
-     * @return true if request exists, false otherwise
-     */
+
     public boolean hasActiveRequest(int userId, int bookId) {
         String query = "SELECT COUNT(*) FROM transactions WHERE u_id = ? AND b_id = ? AND status IN ('PENDING', 'APPROVED') AND return_date IS NULL";
         return executeCountQuery(query, userId, bookId) > 0;
     }
     
-    /**
-     * Get active transactions for a user (approved books not yet returned)
-     * @param userId User ID
-     * @return List of active transactions
-     */
+
     public List<Transaction> getActiveTransactionsByUserId(int userId) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -435,7 +405,6 @@ public class TransactionDao extends DatabaseService {
         transaction.setIssueDate(resultSet.getDate("issue_date"));
         transaction.setReturnDate(resultSet.getDate("return_date"));
         
-        // Set additional display fields if available
         try {
             transaction.setUserName(resultSet.getString("user_name"));
             transaction.setBookTitle(resultSet.getString("book_title"));

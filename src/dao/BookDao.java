@@ -15,11 +15,7 @@ public class BookDao extends DatabaseService {
         super();
     }
     
-    /**
-     * Create a new book
-     * @param book Book object to create
-     * @return true if successful, false otherwise
-     */
+
     public boolean createBook(Book book) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -38,13 +34,11 @@ public class BookDao extends DatabaseService {
             statement.setString(6, book.getShelve());
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
-            
+
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error creating book: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } finally {
             closeResources(connection, statement);
@@ -109,12 +103,7 @@ public class BookDao extends DatabaseService {
         
         return books;
     }
-    
-    /**
-     * Search books by title
-     * @param title Title to search for (partial match)
-     * @return List of matching books
-     */
+
     public List<Book> searchBooksByTitle(String title) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -179,11 +168,7 @@ public class BookDao extends DatabaseService {
         return books;
     }
     
-    /**
-     * Search books by category
-     * @param category Category to search for (partial match)
-     * @return List of matching books
-     */
+
     public List<Book> searchBooksByCategory(String category) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -213,11 +198,7 @@ public class BookDao extends DatabaseService {
         return books;
     }
     
-    /**
-     * Search books by multiple criteria
-     * @param searchTerm Search term to match against title, author, or category
-     * @return List of matching books
-     */
+
     public List<Book> searchBooks(String searchTerm) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -276,13 +257,11 @@ public class BookDao extends DatabaseService {
             statement.setInt(7, book.getId());
             
             int rowsAffected = statement.executeUpdate();
-//            commitTransaction(connection);
-            
+
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error updating book: " + e.getMessage());
-//            rollbackTransaction(connection);
             return false;
         } catch (Exception e) {
             System.err.println("Unexpected error:" + e.getMessage());
@@ -307,13 +286,11 @@ public class BookDao extends DatabaseService {
             statement.setInt(2, bookId);
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
-            
+
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error updating book quantity: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } catch (Exception e) {
             System.err.println("Unexpected error:" + e.getMessage());
@@ -336,13 +313,11 @@ public class BookDao extends DatabaseService {
             statement.setInt(1, bookId);
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
             
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error deleting book: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } catch (Exception e) {
             System.err.println("Unexpected error:" + e.getMessage());
@@ -351,11 +326,8 @@ public class BookDao extends DatabaseService {
             closeResources(connection, statement);
         }
     }
-    
-    /**
-     * Get available books (quantity > 0)
-     * @return List of available books
-     */
+
+
     public List<Book> getAvailableBooks() {
         Connection connection = null;
         PreparedStatement statement = null;

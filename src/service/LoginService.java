@@ -3,10 +3,6 @@ package service;
 import dao.UserDao;
 import dto.User;
 
-/**
- * Login Service
- * Handles user authentication and session management
- */
 public class LoginService {
     private UserDao userDao;
     private User currentUser;
@@ -16,12 +12,7 @@ public class LoginService {
         this.currentUser = null;
     }
     
-    /**
-     * Authenticate user login
-     * @param email User email
-     * @param password User password
-     * @return true if login successful, false otherwise
-     */
+
     public boolean login(String email, String password) {
         try {
 
@@ -154,9 +145,6 @@ public class LoginService {
     
 
     public boolean changePassword(String oldPassword, String newPassword) {
-//        if (!hasUserPermission()) {
-//            return false;
-//        }
         
         if (!currentUser.getPassword().equals(oldPassword)) {
             System.out.println("Current password is incorrect.");

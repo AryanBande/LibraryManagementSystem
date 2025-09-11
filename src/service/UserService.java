@@ -65,82 +65,6 @@ public class UserService {
     }
     
 
-    public User getUserById(int userId) {
-        try {
-            if (userId <= 0) {
-                System.out.println("Invalid user ID.");
-                return null;
-            }
-            
-            return userDao.getUserById(userId);
-        } catch (Exception e) {
-            System.err.println("Error getting user by ID: " + e.getMessage());
-            return null;
-        }
-    }
-    
-
-    public User getUserByEmail(String email) {
-        try {
-            if (email == null || email.trim().isEmpty()) {
-                System.out.println("Email cannot be empty.");
-                return null;
-            }
-            
-            return userDao.getUserByEmail(email.trim().toLowerCase());
-        } catch (Exception e) {
-            System.err.println("Error getting user by email: " + e.getMessage());
-            return null;
-        }
-    }
-    
-//
-//    public boolean updateUser(int userId, String name, String email, String password, String userType) {
-//        try {
-//            // Get existing user
-//            User existingUser = userDao.getUserById(userId);
-//            if (existingUser == null) {
-//                System.out.println("User not found.");
-//                return false;
-//            }
-//
-//            // Validate input
-//            if (!validateUserInput(name, email, password, userType)) {
-//                return false;
-//            }
-//
-//            // Check if email is being changed and if new email already exists
-//            if (!existingUser.getEmail().equals(email.trim().toLowerCase())) {
-//                if (userDao.emailExists(email)) {
-//                    System.out.println("Email already exists. Please use a different email address.");
-//                    return false;
-//                }
-//            }
-//
-//            // Update user object
-//            existingUser.setName(name.trim());
-//            existingUser.setEmail(email.trim().toLowerCase());
-//            existingUser.setPassword(password);
-//            existingUser.setUserType(userType.toUpperCase());
-//
-//            // Save to database
-//            boolean success = userDao.updateUser(existingUser);
-//
-//            if (success) {
-//                System.out.println("User updated successfully: " + name);
-//                return true;
-//            } else {
-//                System.out.println("Failed to update user. Please try again.");
-//                return false;
-//            }
-//
-//        } catch (Exception e) {
-//            System.err.println("Error updating user: " + e.getMessage());
-//            return false;
-//        }
-//    }
-    
-
     public boolean deleteUser(int userId) {
         try {
             if (userId <= 0) {
@@ -154,7 +78,6 @@ public class UserService {
                 return false;
             }
             
-            // Delete user
             boolean success = userDao.deleteUser(userId);
             
             if (success) {
@@ -239,38 +162,7 @@ public class UserService {
             System.out.println("Unable to display users at this time. Please try again later.");
         }
     }
-    
 
-    public void displayUsersByType(String userType) {
-        try {
-            List<User> users = getUsersByType(userType);
-            
-            if (users == null || users.isEmpty()) {
-                System.out.println("No " + userType.toLowerCase() + "s found.");
-                return;
-            }
-            
-            String title = userType.toUpperCase() + "S";
-            System.out.println("\n" + "=".repeat(100));
-            System.out.println(title);
-            System.out.println("=".repeat(100));
-            System.out.printf("%-5s | %-25s | %-30s%n", "ID", "Name", "Email");
-            System.out.println("-".repeat(100));
-            
-            for (User user : users) {
-                System.out.printf("%-5d | %-25s | %-30s%n", 
-                    user.getId(), 
-                    truncateString(user.getName(), 25), 
-                    truncateString(user.getEmail(), 30));
-            }
-            
-            System.out.println("-".repeat(100));
-            System.out.println("Total " + userType.toLowerCase() + "s: " + users.size());
-            
-        } catch (Exception e) {
-            System.err.println("Error displaying users by type: " + e.getMessage());
-        }
-    }
 
     private boolean validateUserInput(String name, String email, String password, String userType) {
 
@@ -289,7 +181,6 @@ public class UserService {
             return false;
         }
 
-        // Validate email
         if (email == null || email.trim().isEmpty()) {
             System.out.println("Email cannot be empty.");
             return false;
@@ -350,39 +241,6 @@ public class UserService {
         } catch (Exception e) {
             System.err.println("Error checking if user exists: " + e.getMessage());
             return false;
-        }
-    }
-    
-
-    public int getTotalUsersCount() {
-        try {
-            List<User> users = userDao.getAllUsers();
-            return users != null ? users.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting users count: " + e.getMessage());
-            return 0;
-        }
-    }
-    
-
-    public int getAdminsCount() {
-        try {
-            List<User> admins = userDao.getUsersByType("ADMIN");
-            return admins != null ? admins.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting admins count: " + e.getMessage());
-            return 0;
-        }
-    }
-    
-
-    public int getRegularUsersCount() {
-        try {
-            List<User> users = userDao.getUsersByType("USER");
-            return users != null ? users.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting regular users count: " + e.getMessage());
-            return 0;
         }
     }
 }

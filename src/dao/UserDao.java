@@ -5,10 +5,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * User Data Access Object
- * Handles all user-related database operations
- */
+
 public class UserDao extends DatabaseService {
     
     public UserDao() {
@@ -51,11 +48,7 @@ public class UserDao extends DatabaseService {
         return null;
     }
     
-    /**
-     * Create a new user
-     * @param user User object to create
-     * @return true if successful, false otherwise
-     */
+
     public boolean createUser(User user) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -158,10 +151,7 @@ public class UserDao extends DatabaseService {
         return null;
     }
     
-    /**
-     * Get all users
-     * @return List of all users
-     */
+
     public List<User> getAllUsers() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -196,11 +186,7 @@ public class UserDao extends DatabaseService {
         return users;
     }
     
-    /**
-     * Update user information
-     * @param user User object with updated information
-     * @return true if successful, false otherwise
-     */
+
     public boolean updateUser(User user) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -218,13 +204,10 @@ public class UserDao extends DatabaseService {
             statement.setInt(5, user.getId());
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
-            
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error updating user: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } catch (Exception e) {
             System.err.println("Unexpected error ");
@@ -247,13 +230,11 @@ public class UserDao extends DatabaseService {
             statement.setInt(1, userId);
             
             int rowsAffected = statement.executeUpdate();
-            commitTransaction(connection);
             
             return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error deleting user: " + e.getMessage());
-            rollbackTransaction(connection);
             return false;
         } catch (Exception e) {
             System.err.println("Unexpected error ");
@@ -263,21 +244,13 @@ public class UserDao extends DatabaseService {
         }
     }
     
-    /**
-     * Check if email already exists
-     * @param email Email to check
-     * @return true if email exists, false otherwise
-     */
+
     public boolean emailExists(String email) {
         String query = "SELECT COUNT(*) FROM users WHERE email = ?";
         return executeCountQuery(query, email) > 0;
     }
     
-    /**
-     * Get users by type
-     * @param userType User type ('USER' or 'ADMIN')
-     * @return List of users with specified type
-     */
+
     public List<User> getUsersByType(String userType) {
         Connection connection = null;
         PreparedStatement statement = null;

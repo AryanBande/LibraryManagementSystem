@@ -16,9 +16,9 @@ public class BookService {
     public boolean createBook(String title, String author, String category, int quantity, int floor, String shelve) {
         try {
 
-//            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
-//                return false;
-//            }
+            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
+                return false;
+            }
             
             if (bookDao.bookExists(title, author)) {
                 System.out.println("Book already exists. Consider updating quantity instead.");
@@ -175,44 +175,44 @@ public class BookService {
     }
     
 
-//    public boolean updateBook(int bookId, String title, String author, String category, int quantity, int floor, String shelve) {
-//        try {
-//            // Get existing book
-//            Book existingBook = bookDao.getBookById(bookId);
-//            if (existingBook == null) {
-//                System.out.println("Book not found.");
+    public boolean updateBook(int bookId, String title, String author, String category, int quantity, int floor, String shelve) {
+        try {
+            // Get existing book
+            Book existingBook = bookDao.getBookById(bookId);
+            if (existingBook == null) {
+                System.out.println("Book not found.");
+                return false;
+            }
+
+            // Validate input
+//            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
 //                return false;
 //            }
-//
-//            // Validate input
-////            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
-////                return false;
-////            }
-//
-//            // Update book object
-//            existingBook.setTitle(title.trim());
-//            existingBook.setAuthor(author.trim());
-//            existingBook.setCategory(category.trim());
-//            existingBook.setQuantity(quantity);
-//            existingBook.setFloor(floor);
-//            existingBook.setShelve(shelve.trim().toUpperCase());
-//
-//            // Save to database
-//            boolean success = bookDao.updateBook(existingBook);
-//
-//            if (success) {
-//                System.out.println("Book updated successfully: " + title);
-//                return true;
-//            } else {
-//                System.out.println("Failed to update book. Please try again.");
-//                return false;
-//            }
-//
-//        } catch (Exception e) {
-//            System.err.println("Error updating book: " + e.getMessage());
-//            return false;
-//        }
-//    }
+
+            // Update book object
+            existingBook.setTitle(title.trim());
+            existingBook.setAuthor(author.trim());
+            existingBook.setCategory(category.trim());
+            existingBook.setQuantity(quantity);
+            existingBook.setFloor(floor);
+            existingBook.setShelve(shelve.trim().toUpperCase());
+
+            // Save to database
+            boolean success = bookDao.updateBook(existingBook);
+
+            if (success) {
+                System.out.println("Book updated successfully: " + title);
+                return true;
+            } else {
+                System.out.println("Failed to update book. Please try again.");
+                return false;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error updating book: " + e.getMessage());
+            return false;
+        }
+    }
     
 
     public boolean updateBookQuantity(int bookId, int newQuantity) {
@@ -227,14 +227,12 @@ public class BookService {
                 return false;
             }
             
-            // Check if book exists
             Book book = bookDao.getBookById(bookId);
             if (book == null) {
                 System.out.println("Book not found.");
                 return false;
             }
             
-            // Update quantity
             boolean success = bookDao.updateBookQuantity(bookId, newQuantity);
             
             if (success) {
@@ -398,65 +396,65 @@ public class BookService {
     }
     
 //
-//    private boolean validateBookInput(String title, String author, String category, int quantity, int floor, String shelve) {
-//
-//        if (title == null || title.trim().isEmpty()) {
-//            System.out.println("Title cannot be empty.");
-//            return false;
-//        }
-//
-//        if (title.trim().length() > 200) {
-//            System.out.println("Title cannot exceed 200 characters.");
-//            return false;
-//        }
-//
-//
-//        if (author == null || author.trim().isEmpty()) {
-//            System.out.println("Author cannot be empty.");
-//            return false;
-//        }
-//
-//        if (author.trim().length() > 150) {
-//            System.out.println("Author cannot exceed 150 characters.");
-//            return false;
-//        }
-//
-//
-//        if (category == null || category.trim().isEmpty()) {
-//            System.out.println("Category cannot be empty.");
-//            return false;
-//        }
-//
-//        if (category.trim().length() > 100) {
-//            System.out.println("Category cannot exceed 100 characters.");
-//            return false;
-//        }
-//
-//
-//        if (quantity < 0) {
-//            System.out.println("Quantity cannot be negative.");
-//            return false;
-//        }
-//
-//
-//        if (floor <= 0) {
-//            System.out.println("Floor must be a positive number.");
-//            return false;
-//        }
-//
-//
-//        if (shelve == null || shelve.trim().isEmpty()) {
-//            System.out.println("Shelve cannot be empty.");
-//            return false;
-//        }
-//
-//        if (shelve.trim().length() > 50) {
-//            System.out.println("Shelve identifier cannot exceed 50 characters.");
-//            return false;
-//        }
-//
-//        return true;
-//    }
+    private boolean validateBookInput(String title, String author, String category, int quantity, int floor, String shelve) {
+
+        if (title == null || title.trim().isEmpty()) {
+            System.out.println("Title cannot be empty.");
+            return false;
+        }
+
+        if (title.trim().length() > 200) {
+            System.out.println("Title cannot exceed 200 characters.");
+            return false;
+        }
+
+
+        if (author == null || author.trim().isEmpty()) {
+            System.out.println("Author cannot be empty.");
+            return false;
+        }
+
+        if (author.trim().length() > 150) {
+            System.out.println("Author cannot exceed 150 characters.");
+            return false;
+        }
+
+
+        if (category == null || category.trim().isEmpty()) {
+            System.out.println("Category cannot be empty.");
+            return false;
+        }
+
+        if (category.trim().length() > 100) {
+            System.out.println("Category cannot exceed 100 characters.");
+            return false;
+        }
+
+
+        if (quantity < 0) {
+            System.out.println("Quantity cannot be negative.");
+            return false;
+        }
+
+
+        if (floor <= 0) {
+            System.out.println("Floor must be a positive number.");
+            return false;
+        }
+
+
+        if (shelve == null || shelve.trim().isEmpty()) {
+            System.out.println("Shelve cannot be empty.");
+            return false;
+        }
+
+        if (shelve.trim().length() > 50) {
+            System.out.println("Shelve identifier cannot exceed 50 characters.");
+            return false;
+        }
+
+        return true;
+    }
     
 
     private String truncateString(String str, int maxLength) {

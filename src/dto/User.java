@@ -1,6 +1,5 @@
 package dto;
 
-
 public class User {
     private int id;
     private String name;
@@ -8,7 +7,6 @@ public class User {
     private String password;
     private String userType; // 'USER' or 'ADMIN'
     
-    // Default constructor
     public User() {}
     
     public User(int id, String name, String email, String password, String userType) {

@@ -68,7 +68,7 @@ public class LibraryManagementSystem {
             switch (choice) {
                 case 1:
                     handleLogin();
-                    return true; // Always return true to continue the main loop after login attempt
+                    return true;
                 case 2:
                     System.out.println("Goodbye!");
                     return false;
@@ -76,7 +76,7 @@ public class LibraryManagementSystem {
                     System.out.println("Invalid choice. Please try again.");
                     return true;
             }
-        }catch (RuntimeException e) { // A catch-all for unexpected database/runtime errors
+        }catch (RuntimeException e) {
             System.err.println("A critical system error occurred: " + e.getMessage());
             scanner.nextLine();
             return true;
@@ -87,7 +87,7 @@ public class LibraryManagementSystem {
         }
     }
 
-    private static void handleLogin() { // MODIFIED: Changed return type to void for consistency
+    private static void handleLogin() {
         boolean success;
         do {
             System.out.println("\n" + "-".repeat(30));
@@ -231,7 +231,7 @@ public class LibraryManagementSystem {
         return true;
     }
 
-    // MODIFIED: Added retry logic
+
     private static void handleAddUser() {
         boolean success;
         do {
@@ -251,11 +251,10 @@ public class LibraryManagementSystem {
             System.out.print("User Type (USER/ADMIN): ");
             String userType = scanner.nextLine().trim();
 
-            // NOTE: This assumes userService.createUser now returns a boolean
             success = userService.createUser(name, email, password, userType);
 
             if (!success) {
-                System.out.print("User creation failed (e.g., invalid email or email already exists). Do you want to retry? (y/N): ");
+                System.out.print("User creation failed. Do you want to retry? (y/N): ");
                 String retry = scanner.nextLine().trim().toLowerCase();
                 if (!(retry.equals("y") || retry.equals("yes"))) {
                     break;
@@ -264,7 +263,7 @@ public class LibraryManagementSystem {
         } while (!success);
     }
 
-    // MODIFIED: Added retry logic
+
     private static void handleRemoveUser() {
         boolean success = false;
         do {
@@ -276,40 +275,38 @@ public class LibraryManagementSystem {
             try {
                 System.out.print("Enter User ID to remove (or 0 to cancel): ");
                 int userId = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                scanner.nextLine();
 
                 if (userId == 0) {
                     System.out.println("Operation cancelled.");
-                    return; // Exit the method
+                    return;
                 }
 
                 if (userId == loginService.getCurrentUserId()) {
                     System.out.println("You cannot delete your own account.");
-                    success = false; // Mark as failure to prompt retry
+                    success = false;
                 } else {
                     System.out.print("Are you sure? (y/N): ");
                     String confirm = scanner.nextLine().trim().toLowerCase();
 
                     if (confirm.equals("y") || confirm.equals("yes")) {
-                        // NOTE: This assumes userService.deleteUser now returns a boolean
                         success = userService.deleteUser(userId);
                     } else {
                         System.out.println("Operation cancelled.");
-                        return; // Exit the method
+                        return;
                     }
                 }
             }catch (InputMismatchException e) {
                 System.err.println("Invalid input. Please enter a valid User ID number.");
                 scanner.nextLine();
             } catch (IllegalStateException e) {
-                // Thrown by the service if the user has pending books/fines
                 System.err.println("Cannot remove user: " + e.getMessage());
             } catch (RuntimeException e) {
                 System.err.println("Database error while removing user. Please try again.");
             } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a valid number.");
                 scanner.nextLine();
-                success = false; // Mark as failure
+                success = false;
             }
 
             if (!success) {
@@ -322,7 +319,7 @@ public class LibraryManagementSystem {
         } while (!success);
     }
 
-    // MODIFIED: Added retry logic
+
     private static void handleAddBook() {
         boolean success;
         do {
@@ -350,7 +347,6 @@ public class LibraryManagementSystem {
                 System.out.print("Shelve: ");
                 String shelve = scanner.nextLine().trim();
 
-                // NOTE: This assumes bookService.createBook now returns a boolean
                 success = bookService.createBook(title, author, category, quantity, floor, shelve);
             } catch (Exception e) {
                 System.out.println("Invalid input. Please enter valid data.");
@@ -368,7 +364,6 @@ public class LibraryManagementSystem {
         } while (!success);
     }
 
-    // MODIFIED: Added retry logic
     private static void handleRemoveBook() {
         boolean success;
         do {
@@ -390,7 +385,6 @@ public class LibraryManagementSystem {
                 String confirm = scanner.nextLine().trim().toLowerCase();
 
                 if (confirm.equals("y") || confirm.equals("yes")) {
-                    // NOTE: This assumes bookService.deleteBook now returns a boolean
                     success = bookService.deleteBook(bookId);
                 } else {
                     System.out.println("Operation cancelled.");
@@ -412,7 +406,6 @@ public class LibraryManagementSystem {
         } while (!success);
     }
 
-    // MODIFIED: Added retry logic
     private static void handleUpdateBookQuantity() {
         boolean success;
         do {
@@ -429,7 +422,6 @@ public class LibraryManagementSystem {
                 int newQuantity = scanner.nextInt();
                 scanner.nextLine();
 
-                // NOTE: This assumes bookService.updateBookQuantity now returns a boolean
                 success = bookService.updateBookQuantity(bookId, newQuantity);
             } catch (Exception e) {
                 System.out.println("Invalid input. Please enter valid numbers.");
@@ -486,7 +478,7 @@ public class LibraryManagementSystem {
             }
         } catch (Exception e) {
             System.out.println("Invalid input. Please enter valid numbers.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
         }
     }
 
@@ -509,7 +501,7 @@ public class LibraryManagementSystem {
         try {
             System.out.print("Enter Transaction ID: ");
             int transactionId = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
 
             Transaction transaction = transactionService.getTransactionById(transactionId);
@@ -564,7 +556,7 @@ public class LibraryManagementSystem {
 
         } catch (Exception e) {
             System.out.println("Invalid input. Please enter a valid number.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
         }
     }
 
@@ -615,7 +607,6 @@ public class LibraryManagementSystem {
         }
     }
 
-    // MODIFIED: Added retry logic
     private static void handleRequestBookIssue() {
         boolean success;
         do {
@@ -629,7 +620,6 @@ public class LibraryManagementSystem {
                 int bookId = scanner.nextInt();
                 scanner.nextLine();
 
-                // NOTE: This assumes transactionService.requestBookIssue now returns a boolean
                 success = transactionService.requestBookIssue(loginService.getCurrentUserId(), bookId);
             } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a valid Book ID.");
@@ -665,7 +655,7 @@ public class LibraryManagementSystem {
         );
     }
 
-    // MODIFIED: Added retry logic
+
     private static void handleChangePassword() {
         boolean success;
         do {
@@ -684,9 +674,8 @@ public class LibraryManagementSystem {
 
             if (!newPassword.equals(confirmPassword)) {
                 System.out.println("New passwords do not match.");
-                success = false; // Mark as failure
+                success = false;
             } else {
-                // NOTE: This assumes loginService.changePassword now returns a boolean
                 success = loginService.changePassword(currentPassword, newPassword);
             }
 
