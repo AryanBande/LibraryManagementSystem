@@ -177,19 +177,16 @@ public class BookService {
 
     public boolean updateBook(int bookId, String title, String author, String category, int quantity, int floor, String shelve) {
         try {
-            // Get existing book
             Book existingBook = bookDao.getBookById(bookId);
             if (existingBook == null) {
                 System.out.println("Book not found.");
                 return false;
             }
 
-            // Validate input
 //            if (!validateBookInput(title, author, category, quantity, floor, shelve)) {
 //                return false;
 //            }
 
-            // Update book object
             existingBook.setTitle(title.trim());
             existingBook.setAuthor(author.trim());
             existingBook.setCategory(category.trim());
@@ -197,7 +194,6 @@ public class BookService {
             existingBook.setFloor(floor);
             existingBook.setShelve(shelve.trim().toUpperCase());
 
-            // Save to database
             boolean success = bookDao.updateBook(existingBook);
 
             if (success) {
@@ -263,14 +259,12 @@ public class BookService {
                 return false;
             }
             
-            // Get book first to show confirmation
             Book book = bookDao.getBookById(bookId);
             if (book == null) {
                 System.out.println("Book not found.");
                 return false;
             }
             
-            // Delete book
             boolean success = bookDao.deleteBook(bookId);
             
             if (success) {

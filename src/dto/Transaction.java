@@ -179,7 +179,6 @@ public class Transaction {
                 id, userId, bookId, status, issueDate, returnDate);
     }
 
-    // Method to display transaction info in a formatted way for console output
     public String getDisplayInfo() {
         String returnInfo = returnDate != null ? returnDate.toString() : "Not Returned";
         String userInfo = userName != null ? userName : "User ID: " + userId;
@@ -189,10 +188,7 @@ public class Transaction {
                 id, userInfo, bookInfo, status, issueDate, returnInfo);
     }
 
-    /**
-     * Get detailed display info with fine information
-     * @return Formatted string with fine details
-     */
+
     public String getDetailedDisplayInfo() {
         String returnInfo = returnDate != null ? returnDate.toString() : "Not Returned";
         String userInfo = userName != null ? userName : "User ID: " + userId;

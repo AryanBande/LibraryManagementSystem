@@ -96,14 +96,7 @@ public class TransactionService {
                 return false;
             }
 
-//            boolean quantityUpdated = bookDao.updateBookQuantity(book.getId(), book.getQuantity() - 1);
             bookDao.updateBookQuantity(book.getId(), book.getQuantity() - 1);
-//            if (!quantityUpdated) {
-//                // Rollback transaction status
-//                transactionDao.updateTransactionStatus(transactionId, "PENDING");
-//                System.out.println("Failed to update book quantity. Please try again.");
-//                return false;
-//            }
 
             System.out.println("Book request approved successfully.");
             return true;
@@ -156,44 +149,6 @@ public class TransactionService {
         }
     }
 
-
-//    public boolean returnBook(int transactionId) {
-//        try {
-//
-//            Transaction transaction = transactionDao.getTransactionById(transactionId);
-//            if (transaction == null) {
-//                System.out.println("Transaction not found.");
-//                return false;
-//            }
-//
-//            if (!transaction.isApproved() || transaction.getReturnDate() != null) {
-//                System.out.println("Book is not currently issued or already returned.");
-//                return false;
-//            }
-//
-//
-//            Date returnDate = new Date(System.currentTimeMillis());
-//            boolean statusUpdated = transactionDao.returnBook(transactionId, returnDate);
-//            if (!statusUpdated) {
-//                System.out.println("Failed to return book. Please try again.");
-//                return false;
-//            }
-//
-//
-//            Book book = bookDao.getBookById(transaction.getBookId());
-//            if (book != null) {
-//                bookDao.updateBookQuantity(book.getId(), book.getQuantity() + 1);
-//            }
-//
-//            System.out.println("Book returned successfully.");
-//            return true;
-//
-//        } catch (Exception e) {
-//            System.err.println("Error returning book: " + e.getMessage());
-//            return false;
-//        }
-//    }
-//
 
     public boolean adminReturnBook(int transactionId, boolean collectFine) {
         try {
@@ -495,60 +450,60 @@ public class TransactionService {
     }
 
 
-    public boolean hasActiveRequest(int userId, int bookId) {
-        try {
-            return transactionDao.hasActiveRequest(userId, bookId);
-        } catch (Exception e) {
-            System.err.println("Error checking active request: " + e.getMessage());
-            return false;
-        }
-    }
+//    public boolean hasActiveRequest(int userId, int bookId) {
+//        try {
+//            return transactionDao.hasActiveRequest(userId, bookId);
+//        } catch (Exception e) {
+//            System.err.println("Error checking active request: " + e.getMessage());
+//            return false;
+//        }
+//    }
 
 
-    public List<Transaction> getTransactionsByStatus(String status) {
-        try {
-            if (status == null || status.trim().isEmpty()) {
-                System.out.println("Status cannot be empty.");
-                return null;
-            }
+//    public List<Transaction> getTransactionsByStatus(String status) {
+//        try {
+//            if (status == null || status.trim().isEmpty()) {
+//                System.out.println("Status cannot be empty.");
+//                return null;
+//            }
+//
+//            return transactionDao.getTransactionsByStatus(status.trim().toUpperCase());
+//        } catch (Exception e) {
+//            System.err.println("Error getting transactions by status: " + e.getMessage());
+//            return null;
+//        }
+//    }
 
-            return transactionDao.getTransactionsByStatus(status.trim().toUpperCase());
-        } catch (Exception e) {
-            System.err.println("Error getting transactions by status: " + e.getMessage());
-            return null;
-        }
-    }
-
-    public int getTotalTransactionsCount() {
-        try {
-            List<Transaction> transactions = transactionDao.getAllTransactions();
-            return transactions != null ? transactions.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting transactions count: " + e.getMessage());
-            return 0;
-        }
-    }
-
-    public int getPendingRequestsCount() {
-        try {
-            List<Transaction> transactions = transactionDao.getPendingTransactions();
-            return transactions != null ? transactions.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting pending requests count: " + e.getMessage());
-            return 0;
-        }
-    }
+//    public int getTotalTransactionsCount() {
+//        try {
+//            List<Transaction> transactions = transactionDao.getAllTransactions();
+//            return transactions != null ? transactions.size() : 0;
+//        } catch (Exception e) {
+//            System.err.println("Error getting transactions count: " + e.getMessage());
+//            return 0;
+//        }
+//    }
+//
+//    public int getPendingRequestsCount() {
+//        try {
+//            List<Transaction> transactions = transactionDao.getPendingTransactions();
+//            return transactions != null ? transactions.size() : 0;
+//        } catch (Exception e) {
+//            System.err.println("Error getting pending requests count: " + e.getMessage());
+//            return 0;
+//        }
+//    }
 
 
-    public int getIssuedBooksCount() {
-        try {
-            List<Transaction> transactions = transactionDao.getApprovedTransactions();
-            return transactions != null ? transactions.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting issued books count: " + e.getMessage());
-            return 0;
-        }
-    }
+//    public int getIssuedBooksCount() {
+//        try {
+//            List<Transaction> transactions = transactionDao.getApprovedTransactions();
+//            return transactions != null ? transactions.size() : 0;
+//        } catch (Exception e) {
+//            System.err.println("Error getting issued books count: " + e.getMessage());
+//            return 0;
+//        }
+//    }
 
 
     private String truncateString(String str, int maxLength) {
@@ -558,42 +513,40 @@ public class TransactionService {
     }
 
 
-    public boolean deleteTransaction(int transactionId) {
-        try {
-            if (transactionId <= 0) {
-                System.out.println("Invalid transaction ID.");
-                return false;
-            }
-
-            // Get transaction first
-            Transaction transaction = transactionDao.getTransactionById(transactionId);
-            if (transaction == null) {
-                System.out.println("Transaction not found.");
-                return false;
-            }
-
-            // If it's an approved transaction that hasn't been returned, restore book quantity
-            if (transaction.isApproved() && transaction.getReturnDate() == null) {
-                Book book = bookDao.getBookById(transaction.getBookId());
-                if (book != null) {
-                    bookDao.updateBookQuantity(book.getId(), book.getQuantity() + 1);
-                }
-            }
-
-
-            boolean success = transactionDao.deleteTransaction(transactionId);
-
-            if (success) {
-                System.out.println("Transaction deleted successfully.");
-                return true;
-            } else {
-                System.out.println("Failed to delete transaction. Please try again.");
-                return false;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error deleting transaction: " + e.getMessage());
-            return false;
-        }
-    }
+//    public boolean deleteTransaction(int transactionId) {
+//        try {
+//            if (transactionId <= 0) {
+//                System.out.println("Invalid transaction ID.");
+//                return false;
+//            }
+//
+//            Transaction transaction = transactionDao.getTransactionById(transactionId);
+//            if (transaction == null) {
+//                System.out.println("Transaction not found.");
+//                return false;
+//            }
+//
+//            if (transaction.isApproved() && transaction.getReturnDate() == null) {
+//                Book book = bookDao.getBookById(transaction.getBookId());
+//                if (book != null) {
+//                    bookDao.updateBookQuantity(book.getId(), book.getQuantity() + 1);
+//                }
+//            }
+//
+//
+//            boolean success = transactionDao.deleteTransaction(transactionId);
+//
+//            if (success) {
+//                System.out.println("Transaction deleted successfully.");
+//                return true;
+//            } else {
+//                System.out.println("Failed to delete transaction. Please try again.");
+//                return false;
+//            }
+//
+//        } catch (Exception e) {
+//            System.err.println("Error deleting transaction: " + e.getMessage());
+//            return false;
+//        }
+//    }
 }

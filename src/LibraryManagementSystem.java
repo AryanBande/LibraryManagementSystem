@@ -1,12 +1,11 @@
 import service.*;
-import dto.User;
 import dto.Book;
 import dto.Transaction;
 
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import dao.DatabaseService;
+
 
 public class LibraryManagementSystem {
 
@@ -76,6 +75,10 @@ public class LibraryManagementSystem {
                     System.out.println("Invalid choice. Please try again.");
                     return true;
             }
+        }catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.nextLine();
+            return true;
         }catch (RuntimeException e) {
             System.err.println("A critical system error occurred: " + e.getMessage());
             scanner.nextLine();

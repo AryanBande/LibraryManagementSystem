@@ -101,31 +101,31 @@ public class UserService {
     }
     
 
-    public List<User> getUsersByType(String userType) {
-        try {
-            if (userType == null || userType.trim().isEmpty()) {
-                System.out.println("User type cannot be empty.");
-                return null;
-            }
-            
-            String normalizedUserType = userType.trim().toUpperCase();
-            if (!normalizedUserType.equals("USER") && !normalizedUserType.equals("ADMIN")) {
-                System.out.println("Invalid user type. Must be 'USER' or 'ADMIN'.");
-                return null;
-            }
-            
-            return userDao.getUsersByType(normalizedUserType);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Invalid user type: " + e.getMessage());
-            return null;
-        } catch (RuntimeException e) {
-            System.err.println("System error while getting users by type: " + e.getMessage());
-            return null;
-        } catch (Exception e) {
-            System.err.println("Unexpected error while getting users by type: " + e.getMessage());
-            return null;
-        }
-    }
+//    public List<User> getUsersByType(String userType) {
+//        try {
+//            if (userType == null || userType.trim().isEmpty()) {
+//                System.out.println("User type cannot be empty.");
+//                return null;
+//            }
+//
+//            String normalizedUserType = userType.trim().toUpperCase();
+//            if (!normalizedUserType.equals("USER") && !normalizedUserType.equals("ADMIN")) {
+//                System.out.println("Invalid user type. Must be 'USER' or 'ADMIN'.");
+//                return null;
+//            }
+//
+//            return userDao.getUsersByType(normalizedUserType);
+//        } catch (IllegalArgumentException e) {
+//            System.err.println("Invalid user type: " + e.getMessage());
+//            return null;
+//        } catch (RuntimeException e) {
+//            System.err.println("System error while getting users by type: " + e.getMessage());
+//            return null;
+//        } catch (Exception e) {
+//            System.err.println("Unexpected error while getting users by type: " + e.getMessage());
+//            return null;
+//        }
+//    }
 
 
     public void displayAllUsers() {
@@ -235,12 +235,12 @@ public class UserService {
     }
     
 
-    public boolean userExists(int userId) {
-        try {
-            return userDao.getUserById(userId) != null;
-        } catch (Exception e) {
-            System.err.println("Error checking if user exists: " + e.getMessage());
-            return false;
-        }
-    }
+//    public boolean userExists(int userId) {
+//        try {
+//            return userDao.getUserById(userId) != null;
+//        } catch (Exception e) {
+//            System.err.println("Error checking if user exists: " + e.getMessage());
+//            return false;
+//        }
+//    }
 }

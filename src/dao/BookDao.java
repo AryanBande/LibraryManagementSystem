@@ -5,10 +5,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Book Data Access Object
- * Handles all book-related database operations
- */
+
 public class BookDao extends DatabaseService {
     
     public BookDao() {
@@ -134,11 +131,7 @@ public class BookDao extends DatabaseService {
         return books;
     }
     
-    /**
-     * Search books by author
-     * @param author Author to search for (partial match)
-     * @return List of matching books
-     */
+
     public List<Book> searchBooksByAuthor(String author) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -233,11 +226,7 @@ public class BookDao extends DatabaseService {
         return books;
     }
     
-    /**
-     * Update book information
-     * @param book Book object with updated information
-     * @return true if successful, false otherwise
-     */
+
     public boolean updateBook(Book book) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -356,11 +345,7 @@ public class BookDao extends DatabaseService {
         return books;
     }
     
-    /**
-     * Get books by category
-     * @param category Category name
-     * @return List of books in the category
-     */
+
     public List<Book> getBooksByCategory(String category) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -390,23 +375,13 @@ public class BookDao extends DatabaseService {
         return books;
     }
     
-    /**
-     * Check if book exists by title and author
-     * @param title Book title
-     * @param author Book author
-     * @return true if book exists, false otherwise
-     */
+
     public boolean bookExists(String title, String author) {
         String query = "SELECT COUNT(*) FROM books WHERE UPPER(title) = UPPER(?) AND UPPER(author) = UPPER(?)";
         return executeCountQuery(query, title, author) > 0;
     }
     
-    /**
-     * Helper method to map ResultSet to Book object
-     * @param resultSet ResultSet from query
-     * @return Book object
-     * @throws SQLException if error accessing result set
-     */
+
     private Book mapResultSetToBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         book.setId(resultSet.getInt("id"));

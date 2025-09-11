@@ -80,10 +80,7 @@ public class TransactionDao extends DatabaseService {
         return null;
     }
     
-    /**
-     * Get all transactions with user and book details
-     * @return List of all transactions
-     */
+
     public List<Transaction> getAllTransactions() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -322,11 +319,7 @@ public class TransactionDao extends DatabaseService {
         return transactions;
     }
     
-    /**
-     * Get transactions by status
-     * @param status Transaction status
-     * @return List of transactions with the specified status
-     */
+
     public List<Transaction> getTransactionsByStatus(String status) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -362,11 +355,7 @@ public class TransactionDao extends DatabaseService {
         return transactions;
     }
     
-    /**
-     * Delete transaction by ID
-     * @param transactionId Transaction ID
-     * @return true if successful, false otherwise
-     */
+
     public boolean deleteTransaction(int transactionId) {
         Connection connection = null;
         PreparedStatement statement = null;

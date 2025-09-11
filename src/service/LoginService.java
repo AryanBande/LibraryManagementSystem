@@ -83,54 +83,7 @@ public class LoginService {
     public String getCurrentUserName() {
         return currentUser != null ? currentUser.getName() : "Guest";
     }
-    
 
-//    public boolean validateSession() {
-//        if (currentUser == null) {
-//            return false;
-//        }
-//
-//        try {
-//            // Check if user still exists in database
-//            User dbUser = userDao.getUserById(currentUser.getId());
-//
-//            if (dbUser == null) {
-//                System.out.println("Your account no longer exists. Please contact administrator.");
-//                logout();
-//                return false;
-//            }
-//
-//            // Update current user data in case it was modified
-//            currentUser = dbUser;
-//            return true;
-//
-//        } catch (Exception e) {
-//            System.err.println("Error validating session: " + e.getMessage());
-//            return false;
-//        }
-//    }
-
-//    public boolean hasAdminPermission() {
-//
-//        if (!isCurrentUserAdmin()) {
-//            System.out.println("You don't have permission to perform this operation. Admin access required.");
-//            return false;
-//        }
-//
-//        return true;
-//        return validateSession();
-//    }
-    
-
-//    public boolean hasUserPermission() {
-//        if (!isLoggedIn()) {
-//            System.out.println("Please log in first.");
-//            return false;
-//        }
-//
-//        return validateSession();
-//    }
-    
 
     public void displayCurrentUserInfo() {
         if (currentUser == null) {
@@ -181,33 +134,4 @@ public class LoginService {
             return false;
         }
     }
-
-//    public boolean initializeAdminUser() {
-//        try {
-//            // Check if admin user already exists
-//            User adminUser = userDao.getUserByEmail("admin@library.com");
-//
-//            if (adminUser == null) {
-//                // Create default admin user
-//                User newAdmin = new User("Library Admin", "admin@library.com", "admin123", "ADMIN");
-//                boolean created = userDao.createUser(newAdmin);
-//
-//                if (created) {
-//                    System.out.println("Default admin user created:");
-//                    System.out.println("Email: admin@library.com");
-//                    System.out.println("Password: admin123");
-//                    return true;
-//                } else {
-//                    System.err.println("Failed to create default admin user.");
-//                    return false;
-//                }
-//            }
-//
-//            return true;
-//
-//        } catch (Exception e) {
-//            System.err.println("Error initializing admin user: " + e.getMessage());
-//            return false;
-//        }
-//    }
 }

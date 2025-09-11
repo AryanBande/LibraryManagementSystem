@@ -3,10 +3,7 @@ package dao;
 import utils.DatabaseConnection;
 import java.sql.*;
 
-/**
- * Base Database Service class
- * Provides common database operations and utilities
- */
+
 public class DatabaseService {
     protected DatabaseConnection dbConnection;
     

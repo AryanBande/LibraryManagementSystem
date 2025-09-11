@@ -111,11 +111,7 @@ public class UserDao extends DatabaseService {
         return null;
     }
     
-    /**
-     * Get user by email
-     * @param email User email
-     * @return User object if found, null otherwise
-     */
+
     public User getUserByEmail(String email) {
         Connection connection = null;
         PreparedStatement statement = null;
